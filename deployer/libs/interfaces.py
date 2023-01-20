@@ -24,4 +24,3 @@ class PredictionRequestBody(TypedDict):
 
 class PredictionResponseBody(TypedDict):
     result: list[Union[int, float]]
-

@@ -5,35 +5,31 @@ from typing import Optional
 import typer
 
 from deployer import __app_name__, __version__
-from .utils import check_dependencies, bundle_model
+from deployer.libs.setup import cli_install, check_cli_dependencies
+from deployer.libs.utils import bundle_model
+from deployer.libs.login import aws_login
 
 app = typer.Typer()
 
-TMP_MODEL_PATH = f"{uuid.uuid4()}-model.pkl"
+TMP_MODEL_PATH = f"model-{uuid.uuid4()}.pkl"
 
 
 @app.command()
-def init() -> None:
+def install() -> None:
     """Check dependencies."""
-    try:
-        check_dependencies()
-    except Exception as e:
-        raise e
-    # TODO: maybe don't need this if users can run in the same env as the model uses
-    ml_library = typer.prompt("ML library used in this model (package name used in `pip install`)")
-    import sys
-    import subprocess
+    cli_install()
 
-    # implement pip as a subprocess:
-    subprocess.check_call([sys.executable, '-m', 'pip', 'install', ml_library])
-    typer.echo(f"{ml_library} installed")
+
+@app.command()
+def login() -> None:
+    aws_login()
 
 
 @app.command()
 def bundle() -> None:
     """Bundle ML model with input column data"""
     try:
-        check_dependencies()
+        check_cli_dependencies()
     except Exception as e:
         raise e
 
