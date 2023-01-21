@@ -1,7 +1,9 @@
 # Define function directory
 ARG FUNCTION_DIR="/function"
-
+ARG PYTHON_DEPENDENCIES
+ARG SYSTEM_DEPENDENCIES
 ARG BASE_IMAGE="python:3.10-slim"
+
 FROM ${BASE_IMAGE}  as build-image
 
 # Include global arg in this stage of the build
@@ -23,24 +25,27 @@ ARG FUNCTION_DIR
 RUN mkdir -p ${FUNCTION_DIR}
 
 # Copy function code
-COPY lambda.py interfaces.py model.pkl ${FUNCTION_DIR}/
+COPY lambda.py ${FUNCTION_DIR}/
 
-# Install the function's dependencies using file requirements.txt
-# from your project folder.
-COPY requirements.txt  .
+# Install python dependencies
+ARG PYTHON_DEPENDENCIES
 RUN  pip install \
-     -r requirements.txt \
      --target ${FUNCTION_DIR} \
-        awslambdaric
+        awslambdaric pandas \
+        ${PYTHON_DEPENDENCIES}
 
 
 # Multi-stage build: grab a fresh copy of the base image
 ARG BASE_IMAGE
 FROM ${BASE_IMAGE}
 
+ARG SYSTEM_DEPENDENCIES
 # Install runtime system dependencies
-#RUN apt-get update && apt-get install -y \
-#    libgomp1
+RUN if [ -z "$SYSTEM_DEPENDENCIES" ]; then \
+      echo "NO SYSTEM_DEPENDENCIES SPECIFIED"; \
+    else \
+      apt-get update && apt-get install -y ${SYSTEM_DEPENDENCIES} ; \
+    fi
 
 # Include global arg in this stage of the build
 ARG FUNCTION_DIR

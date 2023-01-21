@@ -1,10 +1,8 @@
 import json
 import os
+import pickle
 
-import dill
 import pandas as pd
-
-from interfaces import Model
 
 
 def lambda_handler(event: dict, _) -> dict:
@@ -26,27 +24,29 @@ def lambda_handler(event: dict, _) -> dict:
     # Load the model
     with open(model_path, "rb") as f:
         try:
-            model = dill.load(f)
+            model = pickle.load(f)
             print("Model loaded")
         except Exception as e:
             raise RuntimeError(f"Loading model failed: {e}")
 
-    # Check if implementation is correct
-    if not isinstance(model, Model):
-        raise RuntimeError("Model object is not the right type")
+    # load input columns
+    input_columns = eval(os.getenv("INPUT_COLUMNS"))
+    if not isinstance(input_columns, list):
+        raise ValueError("Input columns must be a list")
 
     # Run prediction
-    prediction_result = model.run_predict(df[model.input_columns])
+    prediction_result = model.predict(df[input_columns])
 
     # if only one column is returned, name it as result
-    prediction_frame = pd.DataFrame(prediction_result)
-    if prediction_frame.shape[1] == 1:
-        prediction_frame.columns = ["result"]
+    prediction_df = pd.DataFrame(prediction_result)
+    if prediction_df.shape[1] == 1:
+        prediction_df.columns = ["result"]
 
-    total_result = pd.concat([df.drop(columns=model.input_columns), prediction_frame], axis=1)
+    total_result = pd.concat([df.drop(columns=input_columns), prediction_df], axis=1)
 
     # Attach unused columns to result. Most likely those are used as id.
-    response_body = total_result.to_dict(orient="list") # response_body as {column_1: [value1, value2, ...], column_2: [value1, value2, ...], ...}
+    response_body = total_result.to_dict(
+        orient="list")  # response_body as {column_1: [value1, value2, ...], column_2: [value1, value2, ...], ...}
 
     return {
         "statusCode": 200,
