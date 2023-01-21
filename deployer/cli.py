@@ -5,9 +5,9 @@ from typing import Optional
 import typer
 
 from deployer import __app_name__, __version__
-from deployer.libs.setup import cli_install, check_cli_dependencies
-from deployer.libs.utils import bundle_model
 from deployer.libs.login import aws_login
+from deployer.libs.setup import cli_install
+from deployer.libs.utils import bundle_model, pre_command_check
 
 app = typer.Typer()
 
@@ -16,20 +16,23 @@ TMP_MODEL_PATH = f"model-{uuid.uuid4()}.pkl"
 
 @app.command()
 def install() -> None:
-    """Check dependencies."""
+    """Install Docker and Serverless Framework if not installed."""
     cli_install()
 
 
 @app.command()
+@pre_command_check
 def login() -> None:
+    """Configure AWS credentials for Serverless Framework."""
     aws_login()
 
 
 @app.command()
-def bundle() -> None:
-    """Bundle ML model with input column data"""
+@pre_command_check
+def build() -> None:
+    """Build Docker image with model file, and set input columns as environment variables."""
     try:
-        check_cli_dependencies()
+        pre_command_check()
     except Exception as e:
         raise e
 
@@ -56,11 +59,10 @@ def bundle() -> None:
     raise typer.Exit()
 
 
-def build():
-    pass
-
-
+@app.command()
+@pre_command_check
 def deploy():
+    """Deploy model to AWS Lambda with Serverless Framework."""
     pass
 
 

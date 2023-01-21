@@ -6,8 +6,6 @@ from typing import Union
 import dill
 import pandas as pd
 
-from deployer.libs.interfaces import Model
-
 
 def find_static_resource_path(module: str, filename: str) -> Traversable:
     """Load Vega spec template from file"""
@@ -32,3 +30,17 @@ def bundle_model(model: "RAW_Model", input_columns: list[str], target_path: str)
             dill.dump(model, f)
     except Exception as e:
         raise IOError(f"Failed to write model to {target_path}") from e
+
+
+def pre_command_check(f):
+    """Check if a dependency are installed."""
+
+    def wrapper(*args, **kwargs):
+        try:
+            for command in {"aws", "sam", "docker"}:
+                subprocess.run(f"{command} --version", shell=True, check=True, capture_output=True)
+        except FileNotFoundError as e:
+            raise e
+        f(*args, **kwargs)
+
+    return wrapper

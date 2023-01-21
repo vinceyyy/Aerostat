@@ -32,7 +32,7 @@ else
 }
 
 
-$ProgramList = @{ "awscli" = "aws"; "awssamcli" = "sam"; "docker-desktop" = "docker" }
+$ProgramList = @{ "serverless" = "sam"; "docker-desktop" = "docker" }
 ForEach ($Program in $ProgramList.GetEnumerator())
 {
     $ProgramName = $Program.Key
@@ -49,4 +49,4 @@ ForEach ($Program in $ProgramList.GetEnumerator())
         Write-Output "$ProgramName installed"
     }
 }
-Write-Output "AWS CLI, AWS SAM and Docker Desktop are installed."
+Write-Output "Serverless Framework and Docker Desktop are installed."

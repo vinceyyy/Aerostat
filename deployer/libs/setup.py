@@ -19,15 +19,6 @@ def check_cli_dependency(command: str):
         raise Exception(f"{command} is not installed")
 
 
-def check_cli_dependencies():
-    """Check if a dependency are installed."""
-    try:
-        for command in {"aws", "sam", "docker"}:
-            subprocess.run(f"{command} --version", shell=True, check=True, capture_output=True)
-    except FileNotFoundError as e:
-        raise e
-
-
 def install_cli_dependencies():
     if not is_windows():
         raise NotImplementedError("This feature is only supported on Windows")
