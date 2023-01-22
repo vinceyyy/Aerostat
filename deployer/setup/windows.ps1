@@ -32,7 +32,7 @@ else
 }
 
 
-$ProgramList = @{ "serverless" = "sam"; "docker-desktop" = "docker" }
+$ProgramList = @{ "serverless" = "serverless"; "docker-desktop" = "docker" }
 ForEach ($Program in $ProgramList.GetEnumerator())
 {
     $ProgramName = $Program.Key

@@ -15,13 +15,13 @@ def check_cli_dependency(command: str):
     """Check if a dependency are installed."""
     try:
         subprocess.run(f"{command} --version", shell=True, check=True, capture_output=True)
-    except FileNotFoundError:
+    except Exception:
         raise Exception(f"{command} is not installed")
 
 
 def install_cli_dependencies():
     if not is_windows():
-        raise NotImplementedError("This feature is only supported on Windows")
+        raise NotImplementedError("Installing all dependencies via this tool is only supported on Windows")
     try:
         with find_static_resource_path("deployer.setup", "windows.ps1") as p:
             ps_script = p

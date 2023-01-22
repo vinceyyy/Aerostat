@@ -1,23 +1,37 @@
 import pickle
-import uuid
 from typing import Optional
 
 import typer
+from rich import print
+from rich.progress import track
 
 from deployer import __app_name__, __version__
+from deployer.libs.install import check_cli_dependency, install_cli_dependencies
 from deployer.libs.login import aws_login
-from deployer.libs.setup import cli_install
-from deployer.libs.utils import bundle_model, pre_command_check
+from deployer.libs.build import build_image, get_system_dependencies
+from deployer.libs.utils import pre_command_check
 
 app = typer.Typer()
-
-TMP_MODEL_PATH = f"model-{uuid.uuid4()}.pkl"
 
 
 @app.command()
 def install() -> None:
     """Install Docker and Serverless Framework if not installed."""
-    cli_install()
+    dependencies = ["docker", "serverless"]
+    try:
+        for dependency in track(dependencies, "[bold green]Checking dependencies..."):
+            check_cli_dependency(dependency)
+        print("[bold green]All dependencies installed.[/bold green]")
+    except Exception as e:
+        print("\n[bold magenta]Installing dependencies... Please allow Access in the pop-up window[/bold magenta]")
+        try:
+            install_cli_dependencies()
+        except NotImplementedError as e:
+            print(f"[bold red]Error: {e}[/bold red]")
+            raise typer.Exit(1)
+        except FileNotFoundError as e:
+            print(f"[bold red]Error: {e}[/bold red]")
+            raise typer.Exit(1)
 
 
 @app.command()
