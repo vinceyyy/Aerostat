@@ -4,7 +4,7 @@ import subprocess
 from rich import print
 from rich.progress import Progress
 
-from deployer.libs.utils import find_static_resource_path
+from aerostat.libs.utils import find_static_resource_path
 
 
 def is_windows():
@@ -23,7 +23,7 @@ def install_cli_dependencies():
     if not is_windows():
         raise NotImplementedError("Installing all dependencies via this tool is only supported on Windows")
     try:
-        with find_static_resource_path("deployer.setup", "windows.ps1") as p:
+        with find_static_resource_path("aerostat.setup", "windows.ps1") as p:
             ps_script = p
             print(ps_script)
     except Exception as e:

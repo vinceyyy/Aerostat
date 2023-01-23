@@ -1,4 +1,4 @@
-from deployer import cli, __app_name__
+from aerostat import cli, __app_name__
 
 
 def main():
