@@ -45,32 +45,23 @@ def login() -> None:
 @pre_command_check
 def build() -> None:
     """Build Docker image with model file, and set input columns as environment variables."""
-    try:
-        pre_command_check()
-    except Exception as e:
-        raise e
-
     model_path = typer.prompt("Model pickle file path")
-    try:
-        with open(model_path, "rb") as f:
-            model = pickle.load(f)
-    except FileNotFoundError as e:
-        raise FileNotFoundError(f"Load model failed: {e}") from e
+    # TODO: copy model file to docker context, since it cannot reference absolute path
 
     input_columns_str = typer.prompt("""Model input columns (type in as python list format ["col_1", "col_2", ...])""")
-
     try:
         input_columns = eval(input_columns_str)
     except Exception:
-        raise Exception(f"""Input column list is not valid. Please input valid python list as ["col_1", "col_2", ...]""")
+        raise Exception("""Input column list is not valid. Please input valid python list as ["col_1", "col_2", ...]""")
+
+    python_dependencies_str = typer.prompt(
+        """Machine Learning library used in model (type in as pip installable name, e.g. scikit-learn if sklearn is used)""")
+    python_dependencies = python_dependencies_str.split(" ")
 
     try:
-        bundle_model(model, input_columns, TMP_MODEL_PATH)
-    except IOError as e:
-        raise RuntimeError(f"Write to tmp file failed: {e}") from e
-
-    typer.echo("Model bundling finished.")
-    raise typer.Exit()
+        build_image(model_path, input_columns, python_dependencies, get_system_dependencies(python_dependencies))
+    except Exception as e:
+        raise RuntimeError(f"Building docker image failed: {e}") from e
 
 
 @app.command()

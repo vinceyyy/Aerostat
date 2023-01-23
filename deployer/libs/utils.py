@@ -20,16 +20,7 @@ def run_predict(self, input_data: pd.DataFrame) -> Union[pd.DataFrame, pd.Series
     return self.predict(input_data)
 
 
-def bundle_model(model: "RAW_Model", input_columns: list[str], target_path: str):
-    """bundle a model with input column list"""
-    setattr(model, run_predict.__name__, partial(run_predict, model))
-    model.input_columns = input_columns
 
-    try:
-        with open(target_path, "wb") as f:
-            dill.dump(model, f)
-    except Exception as e:
-        raise IOError(f"Failed to write model to {target_path}") from e
 
 
 def pre_command_check(f):
