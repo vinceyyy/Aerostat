@@ -6,10 +6,10 @@ from rich import print
 from rich.progress import track
 
 from aerostat import __app_name__, __version__
-from aerostat.libs.build import build_image, get_system_dependencies
-from aerostat.libs.install import check_cli_dependency, install_cli_dependencies
-from aerostat.libs.login import get_aws_profiles, prompted_create_aws_profile
-from aerostat.libs.utils import pre_command_check
+from aerostat.core.build import build_image, get_system_dependencies
+from aerostat.core.install import check_cli_dependency, install_cli_dependencies
+from aerostat.core.login import get_aws_profiles, prompted_create_aws_profile
+from aerostat.core.utils import pre_command_check
 
 app = typer.Typer()
 

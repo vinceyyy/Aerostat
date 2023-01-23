@@ -7,6 +7,8 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.11"
+typer = {extras = ["all"], version = "^0.7.0"}
+questionary = "^1.10.0"
 
 
 [build-system]
