@@ -1,14 +1,14 @@
-import pickle
 from typing import Optional
 
+import questionary
 import typer
 from rich import print
 from rich.progress import track
 
 from deployer import __app_name__, __version__
-from deployer.libs.install import check_cli_dependency, install_cli_dependencies
-from deployer.libs.login import aws_login
 from deployer.libs.build import build_image, get_system_dependencies
+from deployer.libs.install import check_cli_dependency, install_cli_dependencies
+from deployer.libs.login import get_aws_profiles, prompted_create_aws_profile
 from deployer.libs.utils import pre_command_check
 
 app = typer.Typer()
@@ -38,7 +38,20 @@ def install() -> None:
 @pre_command_check
 def login() -> None:
     """Configure AWS credentials for Serverless Framework."""
-    aws_login()
+    use_existing = False
+    profiles = get_aws_profiles()
+    if len(profiles) == 0:
+        print("[bold red]No AWS profile found. Please create AWS profile with access key first.[/bold red]")
+    else:
+        use_existing = typer.prompt("Existing AWS profiles detected, use existing ones?", type=bool)
+
+    if use_existing:
+        profile = questionary.select(
+            "Select from existing AWS profile to use",
+            choices=profiles).ask()  # returns value of selection
+    else:
+        profile = prompted_create_aws_profile()
+    # TODO: use this profile for deploying
 
 
 @app.command()
