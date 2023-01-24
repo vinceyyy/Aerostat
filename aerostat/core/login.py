@@ -16,12 +16,6 @@ def get_aws_credential_file():
         raise FileNotFoundError(f"Error: {e}") from e
 
 
-def get_aws_profiles():
-    """Get list of AWS profiles from credential file."""
-    config = get_aws_credential_file()
-    return config.sections()
-
-
 def get_aws_profile_credentials(profile: str) -> dict:
     """Get AWS credentials from credential file as dictionary."""
     config = get_aws_credential_file()
@@ -47,7 +41,7 @@ def create_aws_profile(profile_name: str, aws_access_key_id: str, aws_secret_acc
 
 def prompted_create_aws_profile():
     """Prompt user to create AWS profile."""
-    profile_name = typer.prompt("AWS profile name", default="aerostat")
+    profile_name = "aerostat"
     aws_access_key_id = typer.prompt("AWS Access Key ID")
     aws_secret_access_key = typer.prompt("AWS Secret Access Key")
     create_aws_profile(profile_name, aws_access_key_id, aws_secret_access_key)

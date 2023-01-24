@@ -8,7 +8,7 @@ from rich.progress import track
 from aerostat import __app_name__, __version__
 from aerostat.core.build import build_image, get_system_dependencies
 from aerostat.core.install import check_cli_dependency, install_cli_dependencies
-from aerostat.core.login import get_aws_profiles, prompted_create_aws_profile
+from aerostat.core.login import prompted_create_aws_profile, get_aws_credential_file, create_aws_profile
 from aerostat.core.utils import pre_command_check
 
 app = typer.Typer()
@@ -34,28 +34,38 @@ def install() -> None:
             raise typer.Exit(1)
 
 
-@app.command()
 @pre_command_check
+@app.command()
 def login() -> None:
     """Configure AWS credentials for Serverless Framework."""
     use_existing = False
-    profiles = get_aws_profiles()
+    cred_file = get_aws_credential_file()
+    profiles = cred_file.sections()
+
+    if "aerostat" in profiles:
+        print("[bold green]Aerostat already logged in.[/bold green]")
+        return
+
     if len(profiles) == 0:
         print("[bold red]No AWS profile found. Please create AWS profile with access key first.[/bold red]")
     else:
-        use_existing = typer.prompt("Existing AWS profiles detected, use existing ones?", type=bool)
+        use_existing = questionary.confirm("Existing AWS profiles detected, use existing ones?").ask()
 
+    # if using existing profile, copy profile to aerostat
     if use_existing:
         profile = questionary.select(
             "Select from existing AWS profile to use",
             choices=profiles).ask()  # returns value of selection
+        create_aws_profile("aerostat", cred_file[profile]["aws_access_key_id"], cred_file[profile]["aws_secret_access_key"])
+    # if not, create new profile as aerostat
     else:
-        profile = prompted_create_aws_profile()
-    # TODO: use this profile for deploying
+        prompted_create_aws_profile()
+
+    print("[bold green]AWS credentials for Aerostat configured successfully.[/bold green]")
 
 
-@app.command()
 @pre_command_check
+@app.command()
 def build() -> None:
     """Build Docker image with model file, and set input columns as environment variables."""
     model_path = typer.prompt("Model pickle file path")
