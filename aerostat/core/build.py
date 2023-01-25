@@ -1,4 +1,17 @@
+import shutil
 import subprocess
+
+from aerostat.core.utils import find_static_resource_path
+
+
+def copy_model_file(model_path: str) -> str:
+    """copy model file to current directory"""
+    try:
+        aws_module = find_static_resource_path("aerostat.aws")
+        target_path = aws_module.joinpath("model.pkl")
+        shutil.copy(model_path, str(target_path))
+    except Exception as e:
+        raise Exception(f"Failed to copy model file to current directory: {e}")
 
 
 def build_image(model_path: str, input_columns: list[str], dockerfile_path: str, python_dependencies: list[str],

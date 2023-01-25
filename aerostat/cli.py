@@ -6,7 +6,7 @@ from rich import print
 from rich.progress import track
 
 from aerostat import __app_name__, __version__
-from aerostat.core.build import build_image, get_system_dependencies
+from aerostat.core.build import build_image, get_system_dependencies, copy_model_file
 from aerostat.core.install import check_cli_dependency, install_cli_dependencies
 from aerostat.core.login import prompted_create_aws_profile, get_aws_credential_file, create_aws_profile
 from aerostat.core.utils import pre_command_check
@@ -75,7 +75,7 @@ def login() -> None:
 def build() -> None:
     """Build Docker image with model file, and set input columns as environment variables."""
     model_path = typer.prompt("Model pickle file path")
-    # TODO: copy model file to docker context, since it cannot reference absolute path
+    copy_model_file(model_path)
 
     input_columns_str = typer.prompt("""Model input columns (type in as python list format ["col_1", "col_2", ...])""")
     try:

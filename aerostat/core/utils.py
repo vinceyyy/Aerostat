@@ -1,12 +1,13 @@
-import subprocess
 import importlib.resources
+import subprocess
 from importlib.abc import Traversable
 
 
-def find_static_resource_path(module: str, filename: str) -> Traversable:
+def find_static_resource_path(module: str, filename: str = None) -> Traversable:
     """Load Vega spec template from file"""
     try:
-        return importlib.resources.files(module).joinpath(filename)
+        m = importlib.resources.files(module)
+        return m.joinpath(filename) if filename else m
     except Exception:
         raise ValueError(f"Cannot open {filename}")
 
