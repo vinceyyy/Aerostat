@@ -38,28 +38,34 @@ def install() -> None:
 @app.command()
 def login() -> None:
     """Configure AWS credentials for Serverless Framework."""
-    use_existing = False
-    cred_file = get_aws_credential_file()
-    profiles = cred_file.sections()
+    profiles = []
+    cred_file = None
 
-    if "aerostat" in profiles:
-        print("[bold green]Aerostat already logged in.[/bold green]")
-        return
+    try:
+        cred_file = get_aws_credential_file()
+        profiles = cred_file.sections()
+    except FileNotFoundError as e:
+        pass
 
-    if len(profiles) == 0:
+    if len(profiles) > 0:
+        if "aerostat" in profiles:
+            print("[bold green]Aerostat already logged in.[/bold green]")
+            return
+
+        use_existing = questionary.confirm("Existing AWS profiles detected, use existing ones?").ask()
+        # if using existing profile, copy profile to aerostat
+        if use_existing:
+            profile = questionary.select(
+                "Select from existing AWS profile to use",
+                choices=profiles).ask()  # returns value of selection
+            create_aws_profile("aerostat", cred_file[profile]["aws_access_key_id"], cred_file[profile]["aws_secret_access_key"])
+            return
+
+    if cred_file is None or len(profiles) == 0:
         print("[bold red]No AWS profile found. Please create AWS profile with access key first.[/bold red]")
     else:
-        use_existing = questionary.confirm("Existing AWS profiles detected, use existing ones?").ask()
-
-    # if using existing profile, copy profile to aerostat
-    if use_existing:
-        profile = questionary.select(
-            "Select from existing AWS profile to use",
-            choices=profiles).ask()  # returns value of selection
-        create_aws_profile("aerostat", cred_file[profile]["aws_access_key_id"], cred_file[profile]["aws_secret_access_key"])
-    # if not, create new profile as aerostat
-    else:
-        prompted_create_aws_profile()
+        print("[bold red]Input AWS credentials for Aerostat[/bold red]")
+    prompted_create_aws_profile()
 
     print("[bold green]AWS credentials for Aerostat configured successfully.[/bold green]")
 
