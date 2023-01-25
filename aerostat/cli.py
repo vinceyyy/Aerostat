@@ -123,6 +123,8 @@ def build() -> None:
 @app.command()
 def deploy():
     """Deploy model to AWS Lambda with Serverless Framework."""
+    installed_check()
+    docker_running_check()
     pass
 
 

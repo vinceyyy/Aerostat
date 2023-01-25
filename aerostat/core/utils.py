@@ -26,4 +26,14 @@ def installed_check():
     except FileNotFoundError as e:
         raise e
 
-    return wrapper
+
+def docker_running_check():
+    """Check if a dependency are installed.
+    This cannot be used as a decorator because the inner function would need to be registered with Typer.
+    """
+    try:
+        subprocess.run("docker info", shell=True, check=True, capture_output=True)
+    except Exception as e:
+        print(
+            "[bold red]Docker is not running. Please start Docker and try again.[/bold red]"
+        )

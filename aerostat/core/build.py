@@ -19,12 +19,15 @@ def build_image(model_path: str, input_columns: list[str], dockerfile_path: str,
     """bundle a model with input column list"""
     sys_dep_str = f"""--build-arg SYSTEM_DEPENDENCIES={" ".join(system_dependencies)}""" if system_dependencies else ""
 
-    subprocess.call(f"""docker build -t MLSheet \
-     --build-arg MODEL_PATH="{model_path}" \
-     --build-arg PYTHON_DEPENDENCIES="{" ".join(python_dependencies)}" \
-     --build-arg INPUT_COLUMNS="{input_columns}" \
-     {sys_dep_str} \
-     {dockerfile_path}""", shell=True)
+    try:
+        subprocess.call(f"""docker build -t MLSheet \
+         --build-arg MODEL_PATH="{model_path}" \
+         --build-arg PYTHON_DEPENDENCIES="{" ".join(python_dependencies)}" \
+         --build-arg INPUT_COLUMNS="{input_columns}" \
+         {sys_dep_str} \
+         {dockerfile_path}""", shell=True)
+    except Exception as e:
+        raise Exception(f"Failed to build docker image, please make sure docker desktop is running: {e}")
 
 
 def get_system_dependencies(python_dependencies: list[str]) -> list[str]:
