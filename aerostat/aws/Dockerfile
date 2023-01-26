@@ -9,7 +9,7 @@ ARG SYSTEM_DEPENDENCIES
 ARG INPUT_COLUMNS
 
 
-FROM ${BASE_IMAGE}  as build-image
+FROM ${BASE_IMAGE} AS build-image
 
 # Install dependencies for aws runtime API
 RUN apt-get update && apt-get install -y \

@@ -1,11 +1,11 @@
-service: MLSheet
+service: Aerostat
  
 provider:
   name: aws
   ecr:
     # In this section you can define images that will be built locally and uploaded to ECR
     images:
-      mlsheet-image:
+      aerostat-image:
         path: ./
         buildArgs:
           MODEL_PATH: ${env:MODEL_PATH}
@@ -15,12 +15,12 @@ provider:
         platform: linux/amd64
  
 functions:
-  mlsheetFunction:
+  aerostatFunction:
     image:
-      name: mlsheet-image
+      name: aerostat-image
     events:
       - http:
           path: /
           method: post
           cors: true
-    timeout: 300
+    timeout: 30

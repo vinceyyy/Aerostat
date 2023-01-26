@@ -5,11 +5,10 @@ from importlib.abc import Traversable
 from rich import print
 
 
-def find_static_resource_path(module: str, filename: str = None) -> Traversable:
+def find_static_resource_path(module: str, filename: str = "") -> Traversable:
     """Load Vega spec template from file"""
     try:
-        m = importlib.resources.files(module)
-        return m.joinpath(filename) if filename else m
+        return importlib.resources.files(module).joinpath(filename)
     except Exception:
         raise ValueError(f"Cannot open {filename}")
 

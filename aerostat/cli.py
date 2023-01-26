@@ -6,12 +6,17 @@ from rich import print
 from rich.progress import track
 
 from aerostat import __app_name__, __version__
-from aerostat.core.build import build_image, get_system_dependencies, copy_model_file
 from aerostat.core.install import check_cli_dependency, install_cli_dependencies
 from aerostat.core.login import (
     prompted_create_aws_profile,
     get_aws_credential_file,
     create_aws_profile,
+)
+from aerostat.core.deploy import (
+    get_serverless_service_dir,
+    get_system_dependencies,
+    deploy_to_aws,
+    copy_model_file,
 )
 from aerostat.core.utils import installed_check, docker_running_check
 
@@ -87,12 +92,15 @@ def login() -> None:
 
 
 @app.command()
-def build() -> None:
-    """Build Docker image with model file, and set input columns as environment variables."""
+def deploy():
+    """Deploy model to AWS Lambda with Serverless Framework."""
     installed_check()
+    docker_running_check()
 
-    model_path = typer.prompt("Model pickle file path")
-    copy_model_file(model_path)
+    serverless_service_dir = str(get_serverless_service_dir()).strip()
+
+    model_path = typer.prompt("Model pickle file path").strip()
+    model_in_context = copy_model_file(model_path)
 
     input_columns_str = typer.prompt(
         """Model input columns (type in as python list format ["col_1", "col_2", ...])"""
@@ -109,23 +117,16 @@ def build() -> None:
     )
     python_dependencies = python_dependencies_str.split(" ")
 
-    try:
-        build_image(
-            model_path,
-            input_columns,
-            python_dependencies,
-            get_system_dependencies(python_dependencies),
-        )
-    except Exception as e:
-        raise RuntimeError(f"Building docker image failed: {e}") from e
+    print("[bold green]Deploying to AWS Lambda...[/bold green]")
 
-
-@app.command()
-def deploy():
-    """Deploy model to AWS Lambda with Serverless Framework."""
-    installed_check()
-    docker_running_check()
-    pass
+    deploy_to_aws(
+        model_path=model_in_context,
+        input_columns=input_columns,
+        serverless_service_dir=serverless_service_dir,
+        python_dependencies=python_dependencies,
+        system_dependencies=get_system_dependencies(python_dependencies),
+    )
+    # TODO: capture returned api endpoint
 
 
 def _version_callback(value: bool) -> None:
