@@ -33,20 +33,29 @@ else
 
 
 $ProgramList = @{ "serverless" = "serverless"; "docker-desktop" = "docker" }
-ForEach ($Program in $ProgramList.GetEnumerator())
+try
 {
-    $ProgramName = $Program.Key
-    $ProgramCommand = $Program.Value + " --version"
-    try
+    ForEach ($Program in $ProgramList.GetEnumerator())
     {
-        Invoke-Expression $ProgramCommand | Out-Null
-        Write-Output "$ProgramName already installed. Skipping..."
+        $ProgramInstallName = $Program.Key
+        $ProgramInvokeCommand = $Program.Value + " --version"
+        try
+        {
+            Invoke-Expression $ProgramInvokeCommand | Out-Null
+            Write-Output "$ProgramInstallName already installed. Skipping..."
+        }
+        catch
+        {
+            Write-Output "Installing $ProgramInstallName"
+            choco install $ProgramInstallName -y
+            Write-Output "$ProgramInstallName installed"
+        }
     }
-    catch
-    {
-        Write-Output "Installing $ProgramName"
-        choco install ProgramName -y
-        Write-Output "$ProgramName installed"
-    }
+    Write-Output "Serverless Framework and Docker Desktop are installed."
 }
-Write-Output "Serverless Framework and Docker Desktop are installed."
+catch
+{
+    Write-Output "Error installing Chocolatey packages"
+    Write-Output $_.Exception.Message
+    exit
+}
