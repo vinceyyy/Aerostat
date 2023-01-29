@@ -5,7 +5,7 @@ import pickle
 import pandas as pd
 
 
-def lambda_handler(event: dict, _) -> dict:
+def predict(event: dict, _) -> dict:
     """Lambda handler for the aws function.
     This function returns a result, along with all columns that are not specified in input_cols.
 
@@ -52,3 +52,10 @@ def lambda_handler(event: dict, _) -> dict:
     )  # response_body as {column_1: [value1, value2, ...], column_2: [value1, value2, ...], ...}
 
     return {"statusCode": 200, "body": json.dumps(response_body)}
+
+
+def info(event: dict, _) -> dict:
+    with open(f"{os.getenv('FUNCTION_DIR')}/index.html", "r") as f:
+        html = f.read()
+
+    return {"statusCode": 200, "body": html, "headers": {"Content-Type": "text/html"}}

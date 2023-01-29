@@ -20,8 +20,21 @@ functions:
   aerostatPredictFunction:
     image:
       name: aerostat-image
+      command:
+        - lambda.predict
     events:
       - httpApi:
           method: POST
+          path: /
+    timeout: 29
+
+  aerostatInfoFunction:
+    image:
+      name: aerostat-image
+      command:
+        - lambda.info
+    events:
+      - httpApi:
+          method: GET
           path: /
     timeout: 29

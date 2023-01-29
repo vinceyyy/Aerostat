@@ -1,5 +1,8 @@
 import os
 import shutil
+from datetime import datetime
+
+import jinja2
 
 from aerostat.core.utils import (
     find_static_resource_path,
@@ -36,6 +39,29 @@ def get_project_dir(project_name: str) -> str:
     return project_dir
 
 
+def render_html(
+    project_name: str,
+    input_columns: list[str],
+    python_dependencies: list[str],
+    save_to: str,
+):
+    environment = jinja2.Environment()
+    template = environment.from_string(
+        find_static_resource_path("aerostat.aws", "index.html").read_text(
+            encoding="utf-8"
+        )
+    )
+    result = template.render(
+        project_name=project_name,
+        build_timestamp=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        input_columns=input_columns,
+        python_dependencies=python_dependencies,
+    )
+
+    with open(save_to, "w") as f:
+        f.write(result)
+
+
 def deploy_to_aws(
     service_name: str,
     model_path: str,
@@ -54,9 +80,15 @@ def deploy_to_aws(
         "SYSTEM_DEPENDENCIES": " ".join(system_dependencies),
     }
 
+    render_html(
+        project_name=service_name,
+        input_columns=input_columns,
+        python_dependencies=python_dependencies,
+        save_to=os.path.join(serverless_service_dir, "index.html"),
+    )
+
     try:
         run_serverless_command(command="deploy", env=env, cwd=serverless_service_dir)
-
     except Exception as e:
         raise Exception(
             f"Failed to build docker image, please make sure docker desktop is running: {e}"
