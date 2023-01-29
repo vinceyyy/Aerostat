@@ -8,6 +8,7 @@ from rich.progress import track
 from aerostat import __app_name__, __version__
 from aerostat.core import deployer, installer, loginer
 from aerostat.core.checks import installed_check, loggedin_check, docker_running_check
+from aerostat.core.utils import get_deployment_info, list_deployments
 
 app = typer.Typer()
 
@@ -128,6 +129,38 @@ def deploy(
         service_name=service_name,
     )
     # TODO: capture returned api endpoint
+
+
+@app.command()
+def ls():
+    """List all deployed models."""
+    deployments = list_deployments()
+    newline = "\n  • "
+    print(
+        f"""
+[bold green]Found deployments:[/bold green]
+  • {newline.join(deployments)}
+"""
+    )
+
+
+@app.command()
+def info(project_name: Optional[str] = typer.Argument(None)) -> None:
+    """Show information about deployments."""
+    deployments = list_deployments()
+    if project_name:
+        if project_name not in deployments:
+            print(
+                f"[bold red]Deployment {project_name} not found. Please check with aerostat ls.[/bold red]"
+            )
+            raise typer.Exit(1)
+        return get_deployment_info(project_name)
+
+    selected_project = questionary.select(
+        "Select from existing deployments", choices=deployments
+    ).ask()
+
+    return get_deployment_info(selected_project)
 
 
 def _version_callback(value: bool) -> None:

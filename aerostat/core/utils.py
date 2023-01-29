@@ -29,3 +29,23 @@ def find_static_resource_path(module: str, filename: str = "") -> Traversable:
         return importlib.resources.files(module).joinpath(filename)
     except Exception:
         raise ValueError(f"Cannot open {filename}")
+
+
+def list_deployments():
+    """List deployments from local storage"""
+    local_storage = get_local_storage()
+    return [
+        n
+        for n in os.listdir(local_storage)
+        if os.path.isdir(os.path.join(local_storage, n))
+    ]
+
+
+def get_deployment_info(project_name: str):
+    """Get deployment info from local storage"""
+    local_storage = get_local_storage()
+    project_dir = os.path.join(local_storage, project_name)
+    if not os.path.exists(project_dir):
+        raise Exception("Deployment info not found. Please deploy first.")
+
+    return run_serverless_command("info", cwd=project_dir)
