@@ -1,11 +1,11 @@
 service: ${env:SERVICE_NAME, "Aerostat"}
- 
+
 provider:
   name: aws
   ecr:
     # In this section you can define images that will be built locally and uploaded to ECR
     images:
-      aerostat-image:
+      ${env:SERVICE_NAME, "aerostat"}-image:
         path: ./
         buildArgs:
           MODEL_PATH: ${env:MODEL_PATH, ""}
@@ -13,14 +13,18 @@ provider:
           PYTHON_DEPENDENCIES: ${env:PYTHON_DEPENDENCIES, ""}
           SYSTEM_DEPENDENCIES: ${env:SYSTEM_DEPENDENCIES, ""}
         platform: linux/amd64
- 
+
+  httpApi:
+    cors: true
+
+
 functions:
-  aerostatFunction:
+  aerostatPredictFunction:
     image:
-      name: aerostat-image
+      name: ${env:SERVICE_NAME, "aerostat"}-image
     events:
-      - http:
+      - httpApi:
+          method: POST
           path: /
-          method: post
-          cors: true
     timeout: 30
+
