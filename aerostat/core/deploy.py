@@ -1,8 +1,7 @@
-import shutil
-import subprocess
 import os
+import shutil
 
-from aerostat.core.utils import find_static_resource_path
+from aerostat.core.utils import find_static_resource_path, run_serverless_command
 
 
 def copy_model_file(model_path: str):
@@ -39,12 +38,8 @@ def deploy_to_aws(
     }
 
     try:
-        subprocess.run(
-            [r"C:\ProgramData\chocolatey\bin\serverless.exe", "deploy", "--aws-profile", "aerostat"],
-            env=env,
-            shell=True,
-            cwd=serverless_service_dir,
-        )
+        run_serverless_command(command="deploy", env=env, cwd=serverless_service_dir)
+
     except Exception as e:
         raise Exception(
             f"Failed to build docker image, please make sure docker desktop is running: {e}"

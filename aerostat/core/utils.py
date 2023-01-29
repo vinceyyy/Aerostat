@@ -52,3 +52,11 @@ def docker_running_check():
         print(
             "[bold red]Docker is not running. Please start Docker and try again.[/bold red]"
         )
+        raise typer.Exit(1)
+
+
+def run_serverless_command(command: str, cwd: str, env: dict = None):
+    """Run a Serverless Framework command."""
+    subprocess.run(
+        f"serverless {command} --aws-profile aerostat", shell=True, check=True, cwd=cwd, env=env
+    )
