@@ -3,6 +3,9 @@ import subprocess
 from importlib.abc import Traversable
 
 from rich import print
+import typer
+
+from aerostat.core.login import get_aws_profile_credentials
 
 
 def find_static_resource_path(module: str, filename: str = "") -> Traversable:
@@ -23,7 +26,20 @@ def installed_check():
                 f"{command} --version", shell=True, check=True, capture_output=True
             )
     except FileNotFoundError as e:
-        raise e
+        print(
+            f"[bold red]Dependencies not installed. Please run [bold blue]aerostat install[/bold blue] and try again.[/bold red]"
+        )
+        raise typer.Exit(1)
+
+
+def loggedin_check():
+    try:
+        get_aws_profile_credentials("aerostat")
+    except Exception as e:
+        print(
+            "[bold red]You are not logged in. Please run [bold blue]aerostat login[/bold blue] and try again.[/bold red]"
+        )
+        raise typer.Exit(1)
 
 
 def docker_running_check():

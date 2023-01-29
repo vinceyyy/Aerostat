@@ -96,6 +96,7 @@ def deploy():
     """Deploy model to AWS Lambda with Serverless Framework."""
     installed_check()
     docker_running_check()
+    loggedin_check()
 
     serverless_service_dir = str(get_serverless_service_dir()).strip()
 
