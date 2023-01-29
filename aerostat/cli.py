@@ -7,11 +7,7 @@ from rich.progress import track
 
 from aerostat import __app_name__, __version__
 from aerostat.core import deployer, installer, loginer
-from aerostat.core.utils import (
-    installed_check,
-    docker_running_check,
-    loggedin_check,
-)
+from aerostat.core.checks import installed_check, loggedin_check, docker_running_check
 
 app = typer.Typer()
 
