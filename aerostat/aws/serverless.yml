@@ -1,4 +1,4 @@
-service: Aerostat
+service: ${env:SERVICE_NAME, "Aerostat"}
  
 provider:
   name: aws
@@ -8,8 +8,8 @@ provider:
       aerostat-image:
         path: ./
         buildArgs:
-          MODEL_PATH: ${env:MODEL_PATH}
-          INPUT_COLUMNS: ${env:INPUT_COLUMNS}
+          MODEL_PATH: ${env:MODEL_PATH, ""}
+          INPUT_COLUMNS: ${env:INPUT_COLUMNS, ""}
           PYTHON_DEPENDENCIES: ${env:PYTHON_DEPENDENCIES, ""}
           SYSTEM_DEPENDENCIES: ${env:SYSTEM_DEPENDENCIES, ""}
         platform: linux/amd64

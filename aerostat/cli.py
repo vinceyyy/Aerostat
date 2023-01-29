@@ -125,6 +125,7 @@ def deploy():
         serverless_service_dir=serverless_service_dir,
         python_dependencies=python_dependencies,
         system_dependencies=get_system_dependencies(python_dependencies),
+        service_name=service_name,
     )
     # TODO: capture returned api endpoint
 

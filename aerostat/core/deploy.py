@@ -21,15 +21,17 @@ def get_serverless_service_dir():
 
 
 def deploy_to_aws(
-    model_path: str,
-    input_columns: list[str],
-    serverless_service_dir: str,
-    python_dependencies: list[str],
-    system_dependencies: list[str],
+        service_name: str,
+        model_path: str,
+        input_columns: list[str],
+        serverless_service_dir: str,
+        python_dependencies: list[str],
+        system_dependencies: list[str],
 ) -> None:
     """bundle a model with input column list"""
     env = {
         **os.environ.copy(),
+        "SERVICE_NAME": service_name,
         "MODEL_PATH": model_path,
         "INPUT_COLUMNS": f"""["{'","'.join(input_columns)}"]""",
         "PYTHON_DEPENDENCIES": " ".join(python_dependencies),
