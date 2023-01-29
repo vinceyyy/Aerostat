@@ -6,19 +6,19 @@ from rich import print
 from rich.progress import track
 
 from aerostat import __app_name__, __version__
-from aerostat.core.install import check_cli_dependency, install_cli_dependencies
-from aerostat.core.login import (
-    prompted_create_aws_profile,
-    get_aws_credential_file,
-    create_aws_profile,
-)
 from aerostat.core.deploy import (
     get_serverless_service_dir,
     get_system_dependencies,
     deploy_to_aws,
     copy_model_file,
 )
-from aerostat.core.utils import installed_check, docker_running_check
+from aerostat.core.install import check_cli_dependency, install_cli_dependencies
+from aerostat.core.login import (
+    prompted_create_aws_profile,
+    get_aws_credential_file,
+    create_aws_profile,
+)
+from aerostat.core.utils import installed_check, docker_running_check, loggedin_check
 
 app = typer.Typer()
 
@@ -92,7 +92,17 @@ def login() -> None:
 
 
 @app.command()
-def deploy():
+def deploy(
+        model_path: str = typer.Option(
+            ..., "--model-path", prompt="Model pickle file path"
+        ),
+        input_columns: str = typer.Option(
+            ..., "--input-columns", prompt="""Model input columns (type in as python list format ["col_1", "col_2", ...])"""
+        ),
+        python_dependencies: str = typer.Option(..., "--python-dependencies",
+                                                prompt="""Machine Learning library used in model (type in as pip installable name, e.g. scikit-learn if sklearn is used)"""),
+        service_name: str = typer.Option("Aerostat", "--service-name", prompt="Name of the service")
+):
     """Deploy model to AWS Lambda with Serverless Framework."""
     installed_check()
     docker_running_check()
@@ -100,23 +110,16 @@ def deploy():
 
     serverless_service_dir = str(get_serverless_service_dir()).strip()
 
-    model_path = typer.prompt("Model pickle file path").strip()
     model_in_context = copy_model_file(model_path)
 
-    input_columns_str = typer.prompt(
-        """Model input columns (type in as python list format ["col_1", "col_2", ...])"""
-    )
     try:
-        input_columns = eval(input_columns_str)
+        input_columns = eval(input_columns)
     except Exception:
         raise Exception(
             """Input column list is not valid. Please input valid python list as ["col_1", "col_2", ...]"""
         )
 
-    python_dependencies_str = typer.prompt(
-        """Machine Learning library used in model (type in as pip installable name, e.g. scikit-learn if sklearn is used)"""
-    )
-    python_dependencies = python_dependencies_str.split(" ")
+    python_dependencies = python_dependencies.split(" ")
 
     print("[bold green]Deploying to AWS Lambda...[/bold green]")
 
