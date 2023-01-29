@@ -28,7 +28,9 @@ def get_aws_profile_credentials(profile: str) -> dict:
         raise KeyError(f"Error: {e}") from e
 
 
-def create_aws_profile(profile_name: str, aws_access_key_id: str, aws_secret_access_key: str) -> None:
+def create_aws_profile(
+    profile_name: str, aws_access_key_id: str, aws_secret_access_key: str
+) -> None:
     """Create AWS profile with AWS credentials."""
     config = configparser.ConfigParser()
     config[profile_name] = {

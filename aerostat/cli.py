@@ -93,15 +93,22 @@ def login() -> None:
 
 @app.command()
 def deploy(
-        model_path: str = typer.Option(
-            ..., "--model-path", prompt="Model pickle file path"
-        ),
-        input_columns: str = typer.Option(
-            ..., "--input-columns", prompt="""Model input columns (type in as python list format ["col_1", "col_2", ...])"""
-        ),
-        python_dependencies: str = typer.Option(..., "--python-dependencies",
-                                                prompt="""Machine Learning library used in model (type in as pip installable name, e.g. scikit-learn if sklearn is used)"""),
-        service_name: str = typer.Option("Aerostat", "--service-name", prompt="Name of the service")
+    model_path: str = typer.Option(
+        ..., "--model-path", prompt="Model pickle file path"
+    ),
+    input_columns: str = typer.Option(
+        ...,
+        "--input-columns",
+        prompt="""Model input columns (type in as python list format ["col_1", "col_2", ...])""",
+    ),
+    python_dependencies: str = typer.Option(
+        ...,
+        "--python-dependencies",
+        prompt="""Machine Learning library used in model (type in as pip installable name, e.g. scikit-learn if sklearn is used)""",
+    ),
+    service_name: str = typer.Option(
+        "Aerostat", "--service-name", prompt="Name of the service"
+    ),
 ):
     """Deploy model to AWS Lambda with Serverless Framework."""
     installed_check()

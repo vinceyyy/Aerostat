@@ -13,7 +13,9 @@ def lambda_handler(event: dict, _) -> dict:
     :param _: Lambda Context runtime methods and attributes: https://docs.aws.amazon.com/lambda/latest/dg/python-context-object.html
     :return: API Gateway Lambda Proxy Output Format: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html
     """
-    request_body = json.loads(event["body"])  # request_body as {column_1: [value1, value2, ...], column_2: [value1, value2, ...], ...}
+    request_body = json.loads(
+        event["body"]
+    )  # request_body as {column_1: [value1, value2, ...], column_2: [value1, value2, ...], ...}
     df = pd.DataFrame(request_body)
 
     # locate model file
@@ -46,9 +48,7 @@ def lambda_handler(event: dict, _) -> dict:
 
     # Attach unused columns to result. Most likely those are used as id.
     response_body = total_result.to_dict(
-        orient="list")  # response_body as {column_1: [value1, value2, ...], column_2: [value1, value2, ...], ...}
+        orient="list"
+    )  # response_body as {column_1: [value1, value2, ...], column_2: [value1, value2, ...], ...}
 
-    return {
-        "statusCode": 200,
-        "body": json.dumps(response_body)
-    }
+    return {"statusCode": 200, "body": json.dumps(response_body)}

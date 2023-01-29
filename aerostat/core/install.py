@@ -14,21 +14,27 @@ def is_windows():
 def check_cli_dependency(command: str):
     """Check if a dependency are installed."""
     try:
-        subprocess.run(f"{command} --version", shell=True, check=True, capture_output=True)
+        subprocess.run(
+            f"{command} --version", shell=True, check=True, capture_output=True
+        )
     except Exception:
         raise Exception(f"{command} is not installed")
 
 
 def install_cli_dependencies():
     if not is_windows():
-        raise NotImplementedError("Installing all dependencies via this tool is only supported on Windows")
+        raise NotImplementedError(
+            "Installing all dependencies via this tool is only supported on Windows"
+        )
     try:
         with find_static_resource_path("aerostat.scripts", "setup_windows.ps1") as p:
             ps_script = p
             print(ps_script)
     except Exception as e:
         raise FileNotFoundError(f"Cannot find setup_windows.ps1: {e}") from e
-    subprocess.call([r"C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe", ps_script])
+    subprocess.call(
+        [r"C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe", ps_script]
+    )
 
 
 def cli_install():
@@ -45,5 +51,7 @@ def cli_install():
             print("[bold green]All dependencies installed.[/bold green]")
         except Exception as e:
             progress.stop()
-            print("\n[bold magenta]Installing dependencies... Please allow Access in the pop-up window[/bold magenta]")
+            print(
+                "\n[bold magenta]Installing dependencies... Please allow Access in the pop-up window[/bold magenta]"
+            )
             install_cli_dependencies()

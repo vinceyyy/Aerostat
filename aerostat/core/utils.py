@@ -2,8 +2,8 @@ import importlib.resources
 import subprocess
 from importlib.abc import Traversable
 
-from rich import print
 import typer
+from rich import print
 
 from aerostat.core.login import get_aws_profile_credentials
 
@@ -58,5 +58,9 @@ def docker_running_check():
 def run_serverless_command(command: str, cwd: str, env: dict = None):
     """Run a Serverless Framework command."""
     subprocess.run(
-        f"serverless {command} --aws-profile aerostat", shell=True, check=True, cwd=cwd, env=env
+        f"serverless {command} --aws-profile aerostat",
+        shell=True,
+        check=True,
+        cwd=cwd,
+        env=env,
     )
