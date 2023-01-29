@@ -7,10 +7,10 @@ from rich.progress import track
 
 from aerostat import __app_name__, __version__
 from aerostat.core.deploy import (
-    get_serverless_service_dir,
     get_system_dependencies,
     deploy_to_aws,
     copy_model_file,
+    get_project_dir,
 )
 from aerostat.core.install import check_cli_dependency, install_cli_dependencies
 from aerostat.core.login import (
@@ -18,7 +18,11 @@ from aerostat.core.login import (
     get_aws_credential_file,
     create_aws_profile,
 )
-from aerostat.core.utils import installed_check, docker_running_check, loggedin_check
+from aerostat.core.utils import (
+    installed_check,
+    docker_running_check,
+    loggedin_check,
+)
 
 app = typer.Typer()
 
@@ -115,9 +119,9 @@ def deploy(
     docker_running_check()
     loggedin_check()
 
-    serverless_service_dir = str(get_serverless_service_dir()).strip()
+    project_dir = get_project_dir(service_name)
 
-    model_in_context = copy_model_file(model_path)
+    model_in_context = copy_model_file(model_path, project_dir)
 
     try:
         input_columns = eval(input_columns)
@@ -133,7 +137,7 @@ def deploy(
     deploy_to_aws(
         model_path=model_in_context,
         input_columns=input_columns,
-        serverless_service_dir=serverless_service_dir,
+        serverless_service_dir=project_dir,
         python_dependencies=python_dependencies,
         system_dependencies=get_system_dependencies(python_dependencies),
         service_name=service_name,

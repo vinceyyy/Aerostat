@@ -5,26 +5,23 @@ provider:
   ecr:
     # In this section you can define images that will be built locally and uploaded to ECR
     images:
-      ${env:SERVICE_NAME, "aerostat"}-image:
+      aerostat-image:
         path: ./
         buildArgs:
-          MODEL_PATH: ${env:MODEL_PATH, ""}
+          MODEL_PATH: ${env:MODEL_PATH, "model.pkl"}
           INPUT_COLUMNS: ${env:INPUT_COLUMNS, ""}
           PYTHON_DEPENDENCIES: ${env:PYTHON_DEPENDENCIES, ""}
           SYSTEM_DEPENDENCIES: ${env:SYSTEM_DEPENDENCIES, ""}
         platform: linux/amd64
-
   httpApi:
     cors: true
-
 
 functions:
   aerostatPredictFunction:
     image:
-      name: ${env:SERVICE_NAME, "aerostat"}-image
+      name: aerostat-image
     events:
       - httpApi:
           method: POST
           path: /
-    timeout: 30
-
+    timeout: 29
