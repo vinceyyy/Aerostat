@@ -6,18 +6,7 @@ from rich import print
 from rich.progress import track
 
 from aerostat import __app_name__, __version__
-from aerostat.core.deploy import (
-    get_system_dependencies,
-    deploy_to_aws,
-    copy_model_file,
-    get_project_dir,
-)
-from aerostat.core.install import check_cli_dependency, install_cli_dependencies
-from aerostat.core.login import (
-    prompted_create_aws_profile,
-    get_aws_credential_file,
-    create_aws_profile,
-)
+from aerostat.core import deployer, installer, loginer
 from aerostat.core.utils import (
     installed_check,
     docker_running_check,
@@ -33,14 +22,14 @@ def install() -> None:
     dependencies = ["docker", "serverless"]
     try:
         for dependency in track(dependencies, "[bold green]Checking dependencies..."):
-            check_cli_dependency(dependency)
+            installer.check_cli_dependency(dependency)
         print("[bold green]All dependencies installed.[/bold green]")
     except Exception as e:
         print(
             "\n[bold magenta]Installing dependencies... Please allow Access in the pop-up window[/bold magenta]"
         )
         try:
-            install_cli_dependencies()
+            installer.install_cli_dependencies()
         except NotImplementedError as e:
             print(f"[bold red]Error: {e}[/bold red]")
             raise typer.Exit(1)
@@ -57,7 +46,7 @@ def login() -> None:
     cred_file = None
 
     try:
-        cred_file = get_aws_credential_file()
+        cred_file = loginer.get_aws_credential_file()
         profiles = cred_file.sections()
     except FileNotFoundError as e:
         pass
@@ -75,7 +64,7 @@ def login() -> None:
             profile = questionary.select(
                 "Select from existing AWS profile to use", choices=profiles
             ).ask()  # returns value of selection
-            create_aws_profile(
+            loginer.create_aws_profile(
                 "aerostat",
                 cred_file[profile]["aws_access_key_id"],
                 cred_file[profile]["aws_secret_access_key"],
@@ -88,7 +77,7 @@ def login() -> None:
         )
     else:
         print("[bold red]Input AWS credentials for Aerostat[/bold red]")
-    prompted_create_aws_profile()
+    loginer.prompted_create_aws_profile()
 
     print(
         "[bold green]AWS credentials for Aerostat configured successfully.[/bold green]"
@@ -119,9 +108,9 @@ def deploy(
     docker_running_check()
     loggedin_check()
 
-    project_dir = get_project_dir(service_name)
+    project_dir = deployer.get_project_dir(service_name)
 
-    model_in_context = copy_model_file(model_path, project_dir)
+    model_in_context = deployer.copy_model_file(model_path, project_dir)
 
     try:
         input_columns = eval(input_columns)
@@ -134,12 +123,12 @@ def deploy(
 
     print("[bold green]Deploying to AWS Lambda...[/bold green]")
 
-    deploy_to_aws(
+    deployer.deploy_to_aws(
         model_path=model_in_context,
         input_columns=input_columns,
         serverless_service_dir=project_dir,
         python_dependencies=python_dependencies,
-        system_dependencies=get_system_dependencies(python_dependencies),
+        system_dependencies=deployer.get_system_dependencies(python_dependencies),
         service_name=service_name,
     )
     # TODO: capture returned api endpoint

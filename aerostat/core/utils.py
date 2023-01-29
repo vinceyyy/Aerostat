@@ -6,7 +6,7 @@ from importlib.abc import Traversable
 import typer
 from rich import print
 
-from aerostat.core.login import get_aws_profile_credentials
+from aerostat.core.loginer import get_aws_profile_credentials
 
 
 def installed_check():
