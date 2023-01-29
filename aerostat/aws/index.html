@@ -6,8 +6,10 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
     <script>
       function submit() {
+        document.querySelector("#output").innerHTML = `<progress className="progress is-small is-primary" max="100"></progress>`
         const columns = {{input_columns}};
-        let data = {};
+
+        const data = {};
         for (let col of columns) {
           data[col] = Array.from(document.querySelectorAll(`input.${col}`)).map(cell => cell.value).filter(cell => cell !== "");
         }
@@ -36,15 +38,46 @@
     </script>
 </head>
 <body>
+
+<nav class="navbar is-info" role="navigation" aria-label="main navigation">
+    <div class="container">
+        <div class="navbar-brand is-align-items-center">
+            <p class="title has-text-white pb-1">{{project_name}}</p>
+        </div>
+        <div class="navbar-end">
+            <div class="navbar-item">
+                <div class="buttons">
+                    <a class="button is-light" href="https://github.com/vinceyyyyyy/Aerostat">
+                        Powered by
+                        <strong class="has-text-info px-1">Aerostat</strong></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
 <div class="container p-4">
-    <h1 class="title">{{project_name}}</h1>
     <div class="columns">
         <div class="column">
-            <div class="block">
-                <p>Build at: {{build_timestamp}}</p>
-                <p>Input Columns: {{input_columns|join(", ")}}</p>
-                <p>Python Libraries used: {{python_dependencies|join(", ")}}</p>
-            </div>
+            <nav class="level">
+                <div class="level-item has-text-centered">
+                    <div>
+                        <p class="heading">Build at</p>
+                        <p class="title is-5">{{build_timestamp}}</p>
+                    </div>
+                </div>
+                <div class="level-item has-text-centered">
+                    <div>
+                        <p class="heading">Input Columns</p>
+                        <p class="title is-5">{{input_columns|join(", ")}}</p>
+                    </div>
+                </div>
+                <div class="level-item has-text-centered">
+                    <div>
+                        <p class="heading">Python Libraries used</p>
+                        <p class="title is-5">{{python_dependencies|join(", ")}}</p>
+                    </div>
+                </div>
+            </nav>
             <h2 class="subtitle">Playground</h2>
             <div class="container p-4">
                 <h2>Input</h2>

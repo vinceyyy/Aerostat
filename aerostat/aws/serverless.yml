@@ -17,7 +17,7 @@ provider:
     cors: true
 
 functions:
-  aerostatPredictFunction:
+  predictFunction:
     image:
       name: aerostat-image
       command:
@@ -28,7 +28,7 @@ functions:
           path: /
     timeout: 29
 
-  aerostatInfoFunction:
+  infoFunction:
     image:
       name: aerostat-image
       command:

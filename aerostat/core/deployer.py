@@ -43,7 +43,7 @@ def render_html(
     project_name: str,
     input_columns: list[str],
     python_dependencies: list[str],
-    save_to: str,
+    save_to: str = None,
 ):
     environment = jinja2.Environment()
     template = environment.from_string(
@@ -58,8 +58,11 @@ def render_html(
         python_dependencies=python_dependencies,
     )
 
-    with open(save_to, "w") as f:
-        f.write(result)
+    if save_to:
+        with open(save_to, "w") as f:
+            f.write(result)
+
+    return result
 
 
 def deploy_to_aws(
@@ -101,3 +104,13 @@ def get_system_dependencies(python_dependencies: list[str]) -> list[str]:
     if "lightgbm" in [s.lower() for s in python_dependencies]:
         system_dependencies.append("libgomp1")
     return system_dependencies
+
+
+if __name__ == "__main__":
+    print(
+        render_html(
+            project_name="test",
+            input_columns=["a", "b"],
+            python_dependencies=["lightgbm"],
+        )
+    )
