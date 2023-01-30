@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "aerostat"
+name = "aerostat-launcher"
 version = "0.0.1"
 description = "A simple CLI tool to deploy your Machine Learning models to cloud, with a public API to use."
 authors = ["Vincent Yan <vincent.yan@blend360.com>"]
@@ -8,6 +8,9 @@ readme = "README.md"
 homepage = "https://github.com/vinceyyyyyy/Aerostat"
 repository = "https://github.com/vinceyyyyyy/Aerostat"
 keywords = ["machine learning deployment", "cloud", "api"]
+packages = [
+    {include = "aerostat"}
+]
 include = [
     "LICENSE", "README.md", "aerostat/**/*", "aerostat/**/.*", "aerostat/**/.*/*",
 ]

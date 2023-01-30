@@ -6,9 +6,9 @@ Aerostat is a simple CLI tool to deploy your Machine Learning models to cloud, w
 ### Installation
 The name `Aerostat` has been used by another PyPI project, please install this package with:
 ```bash
-pip install git+https://github.com/vinceyyyyyy/Aerostat
+pip install aerostat-launcher
 ```
-Most likely you will need to run this module with `python -m` prefix since it is not included in `$PATH`.
+Once installed, it can be used directly via `aerostat`. Most likely you will need to run this module with `python -m` prefix since it is not included in `$PATH`.
 
 To deploy your model, there are only three commands needed: `install`, `login`, and `deploy`.
 
