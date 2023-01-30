@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "aerostat-launcher"
-version = "0.0.1"
+version = "0.0.3"
 description = "A simple CLI tool to deploy your Machine Learning models to cloud, with a public API to use."
 authors = ["Vincent Yan <vincent.yan@blend360.com>"]
 license = "GPL-3.0"
@@ -11,13 +11,10 @@ keywords = ["machine learning deployment", "cloud", "api"]
 packages = [
     {include = "aerostat"}
 ]
-include = [
-    "LICENSE", "README.md", "aerostat/**/*", "aerostat/**/.*", "aerostat/**/.*/*",
-]
 
 
 [tool.poetry.scripts]
-cli = 'aerostat.cli:main'
+aerostat = 'aerostat.cli:app'
 
 
 [tool.poetry.dependencies]
