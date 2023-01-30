@@ -7,7 +7,7 @@ import jinja2
 from aerostat.core.utils import (
     find_static_resource_path,
     run_serverless_command,
-    get_local_storage,
+    get_local_storage, sanitize_service_name,
 )
 
 
@@ -40,10 +40,10 @@ def get_project_dir(project_name: str) -> str:
 
 
 def render_html(
-    project_name: str,
-    input_columns: list[str],
-    python_dependencies: list[str],
-    save_to: str = None,
+        project_name: str,
+        input_columns: list[str],
+        python_dependencies: list[str],
+        save_to: str = None,
 ):
     environment = jinja2.Environment()
     template = environment.from_string(
@@ -66,29 +66,28 @@ def render_html(
 
 
 def deploy_to_aws(
-    service_name: str,
-    model_path: str,
-    input_columns: list[str],
-    serverless_service_dir: str,
-    python_dependencies: list[str],
-    system_dependencies: list[str],
+        service_name: str,
+        model_path: str,
+        input_columns: list[str],
+        serverless_service_dir: str,
+        python_dependencies: list[str],
+        system_dependencies: list[str],
 ) -> None:
     """bundle a model with input column list"""
-    env = {
-        **os.environ.copy(),
-        "SERVICE_NAME": service_name,
-        "MODEL_PATH": model_path,
-        "INPUT_COLUMNS": f"""["{'","'.join(input_columns)}"]""",
-        "PYTHON_DEPENDENCIES": " ".join(python_dependencies),
-        "SYSTEM_DEPENDENCIES": " ".join(system_dependencies),
-    }
-
     render_html(
         project_name=service_name,
         input_columns=input_columns,
         python_dependencies=python_dependencies,
         save_to=os.path.join(serverless_service_dir, "index.html"),
     )
+    env = {
+        **os.environ.copy(),
+        "SERVICE_NAME": sanitize_service_name(service_name),
+        "MODEL_PATH": model_path,
+        "INPUT_COLUMNS": f"""["{'","'.join(input_columns)}"]""",
+        "PYTHON_DEPENDENCIES": " ".join(python_dependencies),
+        "SYSTEM_DEPENDENCIES": " ".join(system_dependencies),
+    }
 
     try:
         run_serverless_command(command="deploy", env=env, cwd=serverless_service_dir)

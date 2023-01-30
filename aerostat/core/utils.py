@@ -31,6 +31,11 @@ def find_static_resource_path(module: str, filename: str = "") -> Traversable:
         raise ValueError(f"Cannot open {filename}")
 
 
+def sanitize_service_name(service_name: str):
+    """Sanitize service name"""
+    return service_name.lower().replace(" ", "-").replace("_", "-")
+
+
 def list_deployments():
     """List deployments from local storage"""
     local_storage = get_local_storage()
