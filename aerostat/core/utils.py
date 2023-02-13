@@ -15,7 +15,7 @@ def run_serverless_command(command: str, cwd: str, env: dict = None):
     )
 
 
-def get_local_storage():
+def get_local_aerostat_folder():
     """Initialize the local storage directory."""
     aerostat_dir = os.path.join(os.path.expanduser("~"), ".aerostat")
     if not os.path.exists(aerostat_dir):
@@ -38,7 +38,7 @@ def sanitize_service_name(service_name: str):
 
 def list_deployments():
     """List deployments from local storage"""
-    local_storage = get_local_storage()
+    local_storage = get_local_aerostat_folder()
     return [
         n
         for n in os.listdir(local_storage)
@@ -48,7 +48,7 @@ def list_deployments():
 
 def get_deployment_info(project_name: str):
     """Get deployment info from local storage"""
-    local_storage = get_local_storage()
+    local_storage = get_local_aerostat_folder()
     project_dir = os.path.join(local_storage, project_name)
     if not os.path.exists(project_dir):
         raise Exception("Deployment info not found. Please deploy first.")
