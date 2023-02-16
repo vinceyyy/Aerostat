@@ -24,6 +24,9 @@ questionary = "^1.10.0"
 jinja2 = "^3.1.2"
 
 
+[tool.poetry.group.dev.dependencies]
+black = {extras = ["d"], version = "^23.1.0"}
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"

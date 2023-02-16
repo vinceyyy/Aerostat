@@ -105,7 +105,7 @@ def deploy(
     docker_running_check()
     loggedin_check()
 
-    project_dir = deployer.get_project_dir(service_name)
+    project_dir = deployer.init_project_dir(service_name)
 
     model_in_context = deployer.copy_model_file(model_path, project_dir)
 

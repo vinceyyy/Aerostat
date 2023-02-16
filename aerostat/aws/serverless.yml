@@ -20,8 +20,6 @@ functions:
   predictFunction:
     image:
       name: aerostat-image
-      command:
-        - lambda.predict
     events:
       - httpApi:
           method: POST
@@ -29,12 +27,16 @@ functions:
     timeout: 29
 
   infoFunction:
-    image:
-      name: aerostat-image
-      command:
-        - lambda.info
+    handler: info.info
+    runtime: python3.9
+    layers:
+      - !Ref StaticResourceLambdaLayer
     events:
       - httpApi:
           method: GET
           path: /
     timeout: 29
+
+layers:
+  staticResource:
+    path: static
