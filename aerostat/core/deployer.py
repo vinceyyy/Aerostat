@@ -60,6 +60,7 @@ def render_html(
     )
 
     if save_to:
+        os.makedirs(os.path.dirname(save_to), exist_ok=True)
         with open(save_to, "w") as f:
             f.write(result)
 
@@ -79,7 +80,7 @@ def deploy_to_aws(
         project_name=service_name,
         input_columns=input_columns,
         python_dependencies=python_dependencies,
-        save_to=os.path.join(serverless_service_dir, "index.html"),
+        save_to=os.path.join(serverless_service_dir, "static", "index.html"),
     )
     env = {
         **os.environ.copy(),

@@ -26,7 +26,7 @@ RUN mkdir -p ${FUNCTION_DIR}
 
 # Copy function code
 ARG MODEL_PATH
-COPY lambda.py index.html ${FUNCTION_DIR}/
+COPY predict.py ${FUNCTION_DIR}/
 COPY ${MODEL_PATH} ${FUNCTION_DIR}/model.pkl
 
 # Install python dependencies
@@ -65,4 +65,4 @@ COPY --from=build-image ${FUNCTION_DIR} ${FUNCTION_DIR}
 
 ENTRYPOINT [ "/usr/local/bin/python", "-m", "awslambdaric" ]
 
-CMD [ "lambda.predict" ]
+CMD [ "predict.predict" ]

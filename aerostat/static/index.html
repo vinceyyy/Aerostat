@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{{project_name}}</title>
+    <title>{{ project_name }}</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
     <script>
       function submit() {
@@ -42,7 +42,7 @@
 <nav class="navbar is-info" role="navigation" aria-label="main navigation">
     <div class="container">
         <div class="navbar-brand is-align-items-center">
-            <p class="title has-text-white pb-1">{{project_name}}</p>
+            <p class="title has-text-white pb-1">{{ project_name }}</p>
         </div>
         <div class="navbar-end">
             <div class="navbar-item">
@@ -62,19 +62,19 @@
                 <div class="level-item has-text-centered">
                     <div>
                         <p class="heading">Build at</p>
-                        <p class="title is-5">{{build_timestamp}}</p>
+                        <p class="title is-5">{{ build_timestamp }}</p>
                     </div>
                 </div>
                 <div class="level-item has-text-centered">
                     <div>
                         <p class="heading">Input Columns</p>
-                        <p class="title is-5">{{input_columns|join(", ")}}</p>
+                        <p class="title is-5">{{ input_columns|join(", ") }}</p>
                     </div>
                 </div>
                 <div class="level-item has-text-centered">
                     <div>
                         <p class="heading">Python Libraries used</p>
-                        <p class="title is-5">{{python_dependencies|join(", ")}}</p>
+                        <p class="title is-5">{{ python_dependencies|join(", ") }}</p>
                     </div>
                 </div>
             </nav>
@@ -85,19 +85,19 @@
                     <thead>
                     <tr>
                         {% for col in input_columns %}
-                        <th>{{col}}</th>
+                            <th>{{ col }}</th>
                         {% endfor %}
                     </tr>
                     </thead>
                     <tbody>
                     {% for col in range(5) %}
-                    <tr>
-                        {% for col in input_columns %}
-                        <th>
-                            <div><input type="string" class="{{col}}"></div>
-                        </th>
-                        {% endfor %}
-                    </tr>
+                        <tr>
+                            {% for col in input_columns %}
+                                <th>
+                                    <div><input type="string" class="{{ col }}"></div>
+                                </th>
+                            {% endfor %}
+                        </tr>
                     {% endfor %}
                     </tbody>
                 </table>
