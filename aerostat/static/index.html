@@ -137,25 +137,34 @@
                     <li class="tab" id="tableau-tab"><a>Tableau</a></li>
                 </ul>
             </div>
-            <div class="container is-active">
+            <div class="container" id="python-tab-content">
                 <pre class="p-0 has-background-white">
-                    <code class="language-python p-0" id="python-tab-content">
+                    <code class="language-python p-0">
     import requests
     import pandas as pd
 
     url = ""
-    data = pd.DataFrame({
-        {%- for col in input_columns %}
-            "{{ col }}": [],
-        {%- endfor %}
-    }).to_json()
+    data = pd.DataFrame(
+        {
+            {%- for col in input_columns %}
+            "{{ col }}": [], # add your data here
+            {%- endfor %}
+        }
+    ).to_json()
     response = requests.post(url, json=data)
     print(response.json())
                     </code>
                 </pre>
             </div>
-            <div class="container is-hidden" id="excel-tab-content">
-                Download
+            <div class="container is-hidden px-4" id="excel-tab-content">
+                <ol>
+                    <li class="my-1"><button id="download-excel" onclick="download('excel')">Download</button><span> Download the Excel template file</span>
+                    </li>
+                    <li class="my-1">Open the downloaded Excel file, put input data to INPUT_TABLE on the Input sheet.
+                    </li>
+                    <li class="my-1">Click Refresh All... button from the Data tab.
+                    </li>
+                </ol>
             </div>
             <div class="container is-hidden" id="google-sheets-tab-content">
                 Link
@@ -170,27 +179,31 @@
   document.querySelector("#python-tab-content").innerHTML = document.querySelector("#python-tab-content").innerHTML.replace(/url = ""/g, `url = "${document.URL}"`);
 
   document.addEventListener('DOMContentLoaded', () => {
-      const tabs = document.querySelectorAll('.tab')
-      if (tabs === undefined) return
+    const tabs = document.querySelectorAll('.tab')
+    if (tabs === undefined) return
 
-      tabs.forEach((tab) => {
-        tab.addEventListener('click', (e) => {
-          // event.currentTarget refers to element on which
-          // the event listener was attached
-          const tabName = e.currentTarget.attributes[1].nodeValue
-          const currentTab = document.querySelector('.tab.is-active')
-          const currentContent = document.getElementById(`${currentTab.id}-content`)
-          const newTab = document.getElementById(tabName)
-          const newTabContent = document.getElementById(`${tabName}-content`)
+    tabs.forEach((tab) => {
+      tab.addEventListener('click', (e) => {
+        // event.currentTarget refers to element on which
+        // the event listener was attached
+        const tabName = e.currentTarget.attributes[1].nodeValue
+        const currentTab = document.querySelector('.tab.is-active')
+        const currentContent = document.getElementById(`${currentTab.id}-content`)
+        const newTab = document.getElementById(tabName)
+        const newTabContent = document.getElementById(`${tabName}-content`)
 
-          currentTab.classList.remove('is-active')
-          currentContent.classList.add('is-hidden')
+        currentTab.classList.remove('is-active')
+        currentContent.classList.add('is-hidden')
 
-          newTab.classList.add('is-active')
-          newTabContent.classList.remove('is-hidden')
-        })
+        newTab.classList.add('is-active')
+        newTabContent.classList.remove('is-hidden')
       })
     })
+  })
+
+  function download(type) {
+     window.location.href = `${document.URL}?template_type=${type}`;
+  }
 </script>
 </body>
 </html>
