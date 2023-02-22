@@ -158,7 +158,7 @@
             </div>
             <div class="container is-hidden px-4" id="excel-tab-content">
                 <ol>
-                    <li class="my-1"><button id="download-excel" onclick="download('excel')">Download</button><span> Download the Excel template file</span>
+                    <li class="my-1"><a id="download-excel" href="." target="_self" download="excel_template.xlsm"><strong>Download</strong></a><span> the Excel template file</span>
                     </li>
                     <li class="my-1">Open the downloaded Excel file, put input data to INPUT_TABLE on the Input sheet.
                     </li>
@@ -201,9 +201,8 @@
     })
   })
 
-  function download(type) {
-     window.location.href = `${document.URL}?template_type=${type}`;
-  }
+  const downloadExcel = document.querySelector('#download-excel')
+  downloadExcel.href = `${document.URL}?type=excel`
 </script>
 </body>
 </html>

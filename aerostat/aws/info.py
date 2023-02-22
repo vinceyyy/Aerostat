@@ -34,5 +34,4 @@ def info(event: dict, _) -> dict:
                 api_endpoint=api_endpoint,
             )
         ),
-        "Content-Disposition": "attachment; filename='aerostat_excel_template.xlsm'",
     }
