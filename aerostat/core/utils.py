@@ -16,7 +16,7 @@ def run_serverless_command(command: str, cwd: str, env: dict = None):
 
 
 def get_local_aerostat_folder():
-    """Initialize the local storage directory."""
+    """Initialize the local storage directory at ~/.aerostat"""
     aerostat_dir = os.path.join(os.path.expanduser("~"), ".aerostat")
     if not os.path.exists(aerostat_dir):
         os.makedirs(aerostat_dir)
