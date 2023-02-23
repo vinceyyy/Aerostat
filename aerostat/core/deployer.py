@@ -9,6 +9,7 @@ from aerostat.core.utils import (
     run_serverless_command,
     get_local_aerostat_folder,
     sanitize_service_name,
+    get_module_version,
 )
 
 
@@ -59,6 +60,7 @@ def render_html(
         build_timestamp=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         input_columns=input_columns,
         python_dependencies=python_dependencies,
+        aerostat_version=get_module_version(),
     )
 
     if save_to:
@@ -110,10 +112,4 @@ def get_system_dependencies(python_dependencies: list[str]) -> list[str]:
 
 
 if __name__ == "__main__":
-    print(
-        render_html(
-            project_name="test",
-            input_columns=["a", "b"],
-            python_dependencies=["lightgbm"],
-        )
-    )
+    print(get_module_version())
