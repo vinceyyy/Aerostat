@@ -32,8 +32,10 @@ def init_project_dir(project_name: str) -> str:
         return project_dir
 
     cloud_template_dir = str(find_static_resource_path("aerostat.aws"))
+    static_layer_dir = str(find_static_resource_path("aerostat.static"))
     try:
         shutil.copytree(src=cloud_template_dir, dst=project_dir)
+        shutil.copytree(src=static_layer_dir, dst=os.path.join(project_dir, "static"))
     except Exception as e:
         raise Exception(f"Failed to copy template to project directory: {e}")
 

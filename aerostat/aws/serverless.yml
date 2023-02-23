@@ -31,6 +31,8 @@ functions:
     runtime: python3.9
     layers:
       - !Ref StaticResourceLambdaLayer
+    environment:
+      INPUT_COLUMNS: ${env:INPUT_COLUMNS, ""}
     events:
       - httpApi:
           method: GET
