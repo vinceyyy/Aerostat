@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "aerostat-launcher"
-version = "0.0.5"
+version = "0.0.6"
 description = "A simple CLI tool to deploy your Machine Learning models to cloud, with a public API to use."
 authors = ["Vincent Yan <vincent.yan@blend360.com>"]
 license = "GPL-3.0"
