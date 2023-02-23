@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
     <script>
       function submit() {
+        document.querySelector(".output").classList.remove("is-hidden");
         document.querySelector("#output").innerHTML = `<progress className="progress is-small is-primary" max="100"></progress>`
         const columns = {{input_columns}};
 
@@ -22,7 +23,7 @@
           body: JSON.stringify(data)
         }).then(response => response.json())
           .then(data => {
-            document.querySelector("#output").innerHTML = JSON.stringify(data, null, 2)
+            document.querySelector("#output").innerHTML = JSON.stringify(data, null, 2);
             console.log("Success:", data);
           })
           .catch((error) => {
@@ -34,6 +35,7 @@
       function reset() {
         const inputs = Array.from(document.querySelectorAll(`input`));
         inputs.forEach(input => input.value = "");
+        document.querySelector(".output").classList.add("is-hidden");
       }
     </script>
 
@@ -117,7 +119,7 @@
                 <button class="button" type="submit" onclick="submit()">Test Model</button>
                 <button class="button" type="submit" onclick="reset()">Reset</button>
             </div>
-            <div class="container p-4">
+            <div class="container p-4 output is-hidden">
                 <h2>Output</h2>
                 <div id="output"></div>
             </div>
@@ -139,20 +141,20 @@
             </div>
             <div class="container" id="python-tab-content">
                 <pre class="p-0 has-background-white">
-                    <code class="language-python p-0">
-    import requests
-    import pandas as pd
+                    <code class="language-python px-6">
+import requests
+import pandas as pd
 
-    url = ""
-    data = pd.DataFrame(
-        {
-            {%- for col in input_columns %}
-            "{{ col }}": [], # add your data here
-            {%- endfor %}
-        }
-    ).to_json()
-    response = requests.post(url, json=data)
-    print(response.json())
+url = ""
+data = pd.DataFrame(
+    {
+    {%- for col in input_columns %}
+        "{{ col }}": [], # add your data here
+    {%- endfor %}
+    }
+).to_dict(orient="list")
+response = requests.post(url, json=data)
+print(response.json())
                     </code>
                 </pre>
             </div>
@@ -160,24 +162,55 @@
                 <ol>
                     <li class="my-1"><a id="download-excel" href="." target="_self" download="excel_template.xlsm"><strong>Download</strong></a><span> the Excel template file.</span>
                     </li>
-                    <li class="my-1">Open the downloaded Excel file, put input data to INPUT_TABLE on the Input sheet.
+                    <li class="my-1">Open the downloaded Excel file, put input data to <strong>INPUT_TABLE</strong> on the <strong>Input
+                        sheet</strong>.
+                        <article class="message is-danger unblock m-4">
+                            <div class="message-header">
+                                <p>Unblock Excel File After Downloading</p>
+                                <button class="delete" aria-label="delete"
+                                        onclick="document.querySelector('.message.unblock').remove()"></button>
+                            </div>
+                            <div class="message-body">
+                                <div class="columns">
+                                    <div class="column">
+                                        When using Excel on Windows, you may encounter a warning message saying that the file is blocked. To
+                                        unblock the file, right-click on the file and select <strong>Properties</strong>. In the
+                                        <strong>General</strong>
+                                        tab, click <strong>Unblock</strong> button. Then click <strong>OK</strong> to save the changes.
+                                    </div>
+                                    <div class="column">
+                                        <img src="https://cdn.shopify.com/s/files/1/0331/0309/files/unblock-file-windows-excel.jpg?v=1585451685"
+                                             alt="unblock excel file" height="400">
+                                    </div>
+                                </div>
+                            </div>
+                        </article>
                     </li>
-                    <li class="my-1">Go to Data tab from the ribbon, click <strong>Refresh All...</strong> button. The result will show up in Output sheet once finished.
+                    <li class="my-1">Go to <strong>Data tab</strong> from the ribbon, click <strong>Refresh All...</strong> button. The
+                        result will show up
+                        in Output sheet once finished.
+                        <img class="p-4" src="https://i.ibb.co/Fg88xJF/Snipaste-2023-02-23-11-41-00.jpg" alt="refresh_all" >
                     </li>
                 </ol>
             </div>
             <div class="container is-hidden px-4" id="google-sheets-tab-content">
                 <ol>
-                    <li class="my-1">Copy <a id="download-google-sheets"
+                    <li class="my-1">Open <a id="download-google-sheets"
                                              href="https://docs.google.com/spreadsheets/d/1f4Izq8aNbG4-RVOIWCVHkLrTyXQEkN69krkhN4G6DRY/edit?usp=sharing"
                                              target="_blank"><strong>Google Sheets
-                        template</strong></a><span> to your Google account.</span>
+                        template</strong></a><span> and save a copy to your Google account.</span>
                     </li>
-                    <li class="my-1">Put input data, along with proper column names, to the Input sheet, starting from A1.
+                    <li class="my-1">Copy the following input column names and paste to <strong>Input sheet</strong>, starting from A1 (you
+                        can select and copy/paste the whole row at once).
+                        <pre>{%- for col in input_columns -%}{{ col }}&#9;{%- endfor -%}</pre>
                     </li>
-                    <li class="my-1">Go to Config sheet, copy the URL from this demo page and paste to the <strong>Api Endpoint (C2)</strong> cell.
+                    <li class="my-1" id="google-sheets-url">Copy and paste the URL and to the
+                        <strong>Api Endpoint (C2)</strong>on <strong>Config sheet</strong>.
                     </li>
-                    <li class="my-1">Click blue <strong>UPDATE</strong> button. The result will show up in Output sheet once finished.
+                    <li class="my-1">Click
+                        <button class="button is-info is-small has-text-weight-bold">UPDATE</button>
+                        button to start the model prediction. The result will show up in Output sheet once
+                        finished.
                     </li>
                 </ol>
             </div>
@@ -191,30 +224,34 @@
   document.querySelector("#python-tab-content").innerHTML = document.querySelector("#python-tab-content").innerHTML.replace(/url = ""/g, `url = "${document.URL}"`);
 
   document.addEventListener('DOMContentLoaded', () => {
-    const tabs = document.querySelectorAll('.tab')
-    if (tabs === undefined) return
+    const tabs = document.querySelectorAll('.tab');
+    if (tabs === undefined) return;
 
     tabs.forEach((tab) => {
       tab.addEventListener('click', (e) => {
         // event.currentTarget refers to element on which
         // the event listener was attached
-        const tabName = e.currentTarget.attributes[1].nodeValue
-        const currentTab = document.querySelector('.tab.is-active')
-        const currentContent = document.getElementById(`${currentTab.id}-content`)
-        const newTab = document.getElementById(tabName)
-        const newTabContent = document.getElementById(`${tabName}-content`)
+        const tabName = e.currentTarget.attributes[1].nodeValue;
+        const currentTab = document.querySelector('.tab.is-active');
+        const currentContent = document.getElementById(`${currentTab.id}-content`);
+        const newTab = document.getElementById(tabName);
+        const newTabContent = document.getElementById(`${tabName}-content`);
 
-        currentTab.classList.remove('is-active')
-        currentContent.classList.add('is-hidden')
+        currentTab.classList.remove('is-active');
+        currentContent.classList.add('is-hidden');
 
-        newTab.classList.add('is-active')
-        newTabContent.classList.remove('is-hidden')
+        newTab.classList.add('is-active');
+        newTabContent.classList.remove('is-hidden');
       })
     })
-  })
+  });
 
-  const downloadExcel = document.querySelector('#download-excel')
-  downloadExcel.href = `${document.URL}?type=excel`
+  const downloadExcel = document.querySelector('#download-excel');
+  downloadExcel.href = `${document.URL}?type=excel`;
+
+  const googleSheetsURL = document.querySelector('#google-sheets-url');
+  googleSheetsURL.innerHTML = `Copy and paste the URL <strong>${document.URL}</strong> and to the
+                        <strong>Api Endpoint (C2)</strong>on <strong>Config sheet</strong>.`;
 </script>
 </body>
 </html>
