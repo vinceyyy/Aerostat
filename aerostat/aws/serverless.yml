@@ -32,7 +32,7 @@ functions:
     layers:
       - !Ref StaticResourceLambdaLayer
     environment:
-      INPUT_COLUMNS: ${env:INPUT_COLUMNS, ""}
+      INPUT_COLUMNS: ${env:INPUT_COLUMNS, ""} # for serving the Excel template
     events:
       - httpApi:
           method: GET

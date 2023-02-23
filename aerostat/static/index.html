@@ -55,7 +55,7 @@
             <div class="navbar-item">
                 <div class="buttons">
                     <a class="button is-light" href="https://github.com/vinceyyyyyy/Aerostat">
-                        Deployed by
+                        Deployed with
                         <strong class="has-text-info px-1">Aerostat</strong></a>
                 </div>
             </div>
@@ -189,7 +189,7 @@ print(response.json())
                     <li class="my-1">Go to <strong>Data tab</strong> from the ribbon, click <strong>Refresh All...</strong> button. The
                         result will show up
                         in Output sheet once finished.
-                        <img class="p-4" src="https://i.ibb.co/Fg88xJF/Snipaste-2023-02-23-11-41-00.jpg" alt="refresh_all" >
+                        <img class="p-4" src="https://i.ibb.co/Fg88xJF/Snipaste-2023-02-23-11-41-00.jpg" alt="refresh_all">
                     </li>
                 </ol>
             </div>
@@ -220,6 +220,14 @@ print(response.json())
         </div>
     </div>
 </section>
+
+<footer class="breadcrumb has-bullet-separator footer" aria-label="breadcrumbs">
+    <ul class="is-justify-content-center">
+        <li><a class="has-text-grey-dark has-text-weight-bold" style="pointer-events: none;">Aerostat v{{ aerostat_version }}</a></li>
+        <li><a href="https://github.com/vinceyyyyyy/Aerostat">GitHub Repo</a></li>
+    </ul>
+</footer>
+
 <script>
   document.querySelector("#python-tab-content").innerHTML = document.querySelector("#python-tab-content").innerHTML.replace(/url = ""/g, `url = "${document.URL}"`);
 

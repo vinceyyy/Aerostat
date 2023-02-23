@@ -1,6 +1,7 @@
-import importlib.resources
 import os
 import subprocess
+import importlib.resources
+from importlib import import_module
 from importlib.abc import Traversable
 
 
@@ -54,3 +55,8 @@ def get_deployment_info(project_name: str):
         raise Exception("Deployment info not found. Please deploy first.")
 
     return run_serverless_command("info", cwd=project_dir)
+
+
+def get_module_version() -> str:
+    """Get module version"""
+    return import_module("aerostat").__version__
