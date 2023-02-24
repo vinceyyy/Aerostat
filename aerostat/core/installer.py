@@ -29,11 +29,16 @@ def install_cli_dependencies():
     try:
         with find_static_resource_path("aerostat.scripts", "setup_windows.ps1") as p:
             ps_script = p
-            print(ps_script)
     except Exception as e:
         raise FileNotFoundError(f"Cannot find setup_windows.ps1: {e}") from e
     subprocess.call(
-        [r"C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe", ps_script]
+        [
+            r"C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-File",
+            ps_script,
+        ]
     )
 
 
