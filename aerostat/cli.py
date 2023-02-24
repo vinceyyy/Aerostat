@@ -3,7 +3,6 @@ from typing import Optional
 import questionary
 import typer
 from rich import print
-from rich.progress import track
 
 from aerostat import __app_name__, __version__
 from aerostat.core import deployer, installer, loginer
@@ -15,15 +14,16 @@ app = typer.Typer()
 
 @app.command()
 def install() -> None:
-    """Install Docker and Serverless Framework if not installed."""
-    dependencies = ["docker", "serverless"]
+    """Install dependencies needed for Aerostat.
+
+    This command will install Chocolatey, Docker, and Serverless if they are not already installed.
+    """
     try:
-        for dependency in track(dependencies, "[bold green]Checking dependencies..."):
-            installer.check_cli_dependency(dependency)
+        installed_check()
         print("[bold green]All dependencies installed.[/bold green]")
     except Exception as e:
         print(
-            "\n[bold magenta]Installing dependencies... Please allow Access in the pop-up window[/bold magenta]"
+            "\n[bold magenta]Installing dependencies... This will invoke PowerShell and ask for admin permission. Please allow Access in the pop-up window[/bold magenta]"
         )
         try:
             installer.install_cli_dependencies()
@@ -37,7 +37,10 @@ def install() -> None:
 
 @app.command()
 def login() -> None:
-    """Configure AWS credentials for Serverless Framework."""
+    """Configure AWS credentials for Aerostat to use.
+
+    This command create or modifies ~/.aws/credentials, creating a new AWS profile named "Aerostat" if it does not exist.
+    """
     installed_check()
     profiles = []
     cred_file = None
@@ -68,7 +71,7 @@ def login() -> None:
             )
             return
 
-    if cred_file is None or len(profiles) == 0:
+    if not cred_file or len(profiles) == 0:
         print(
             "[bold red]No AWS profile found. Please create AWS profile with access key first.[/bold red]"
         )
@@ -89,23 +92,27 @@ def deploy(
     input_columns: str = typer.Option(
         ...,
         "--input-columns",
-        prompt="""Model input columns (type in as python list format ["col_1", "col_2", ...])""",
+        prompt="""Model input columns - type in python list format like ["col_1", "col_2", ...]""",
     ),
     python_dependencies: str = typer.Option(
         ...,
         "--python-dependencies",
-        prompt="""Machine Learning library used in model (type in as pip installable name, e.g. scikit-learn if sklearn is used)""",
+        prompt="""Machine Learning library used for the model (type in as pip installable name, e.g. scikit-learn if sklearn is used)""",
     ),
-    service_name: str = typer.Option(
-        "Aerostat", "--service-name", prompt="Name of the service"
+    project_name: str = typer.Option(
+        "Aerostat", "--project-name", prompt="Name of the project"
     ),
 ):
-    """Deploy model to AWS Lambda with Serverless Framework."""
+    """Deploy model to AWS Lambda.
+
+    This command uses Docker to build image locally, and deploys to AWS Lambda with Serverless Framework.
+    It will blow up if Docker Desktop is not running.
+    """
     installed_check()
     docker_running_check()
     loggedin_check()
 
-    project_dir = deployer.init_project_dir(service_name)
+    project_dir = deployer.init_project_dir(project_name)
 
     model_in_context = deployer.copy_model_file(model_path, project_dir)
 
@@ -126,14 +133,17 @@ def deploy(
         serverless_service_dir=project_dir,
         python_dependencies=python_dependencies,
         system_dependencies=deployer.get_system_dependencies(python_dependencies),
-        service_name=service_name,
+        service_name=project_name,
     )
     # TODO: capture returned api endpoint
 
 
 @app.command()
 def ls():
-    """List all deployed models."""
+    """List all deployments exist locally.
+
+    It looks for all directories in ~/.aerostat. Each directory is essentially a Serverless deployment artifact.
+    """
     deployments = list_deployments()
     newline = "\n  • "
     print(
@@ -146,7 +156,7 @@ def ls():
 
 @app.command()
 def info(project_name: Optional[str] = typer.Argument(None)) -> None:
-    """Show information about deployments."""
+    """Show information about a specific deployment."""
     deployments = list_deployments()
     if project_name:
         if project_name not in deployments:

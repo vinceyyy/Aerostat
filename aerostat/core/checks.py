@@ -2,16 +2,23 @@ import subprocess
 
 import typer
 from rich import print
+from rich.progress import track
 
+from aerostat.core.installer import DEPENDENCIES
 from aerostat.core.loginer import get_aws_profile_credentials
 
 
-def installed_check():
+def installed_check(commands: list[str] = None):
     """Check if a dependency are installed.
     This cannot be used as a decorator because the inner function would need to be registered with Typer.
     """
     try:
-        for command in {"aws", "sam", "docker"}:
+        for command in track(
+            commands
+            if commands
+            else [dependency["command"] for dependency in DEPENDENCIES],
+            "[bold green]Checking dependencies...",
+        ):
             subprocess.run(
                 f"{command} --version", shell=True, check=True, capture_output=True
             )
