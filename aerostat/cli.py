@@ -19,7 +19,7 @@ app = typer.Typer()
 def install() -> None:
     """Install dependencies needed for Aerostat.
 
-    This command will install Chocolatey, Docker, and Serverless if they are not already installed.
+    This command will install Docker, NodeJS, and Serverless if they are not already installed.
     """
     for dependency in progress.track(installer.DEPENDENCIES):
         try:

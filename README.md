@@ -8,13 +8,14 @@ The name `Aerostat` has been used by another PyPI project, please install this p
 ```bash
 pip install aerostat-launcher
 ```
-Once installed, it can be used directly via `aerostat`. If it doesn't work, add `python -m` prefix to all commands, i.e. `python -m aerostat deploy`.
+Once installed, it can be used directly via `aerostat`. If it doesn't work, add `python -m` prefix to all commands,
+i.e. `python -m aerostat deploy`.
 
 Only three commands needed for deploying your model: `install`, `login`, and `deploy`.
 
 ### Setup
-1. Run the following command to install all the dependencies needed to run Aerostat.  
-   This will open a pop-up PowerShell window, and ask for admin permission. Please allow it to continue.
+1. Run the following command to install all the dependencies needed to run Aerostat. Please allow installation in the pop-up windows to
+   continue.
 ```bash
 aerostat install
 ```
@@ -69,6 +70,7 @@ aerostat info my-project
 ## Future Roadmap
 - Improve user interface, including rewrite prompts with Rich, use more colors and emojis
 - Add unit tests
-- Adopt [Semantic Versioning](https://semver.org) once reach v0.1.0 and add CI/[CD](https://mestrak.com/blog/semantic-release-with-python-poetry-github-actions-20nn)
+- Adopt [Semantic Versioning](https://semver.org) once reach v0.1.0 and add
+  CI/[CD](https://mestrak.com/blog/semantic-release-with-python-poetry-github-actions-20nn)
 - Support SSO login
 - Support deploying to GCP
