@@ -1,34 +1,70 @@
 import platform
 import subprocess
 
-from aerostat.core.utils import find_static_resource_path
-
-DEPENDENCIES = [
-    {"install_name": "docker-desktop", "command": "docker"},
-    {"install_name": "serverless", "command": "serverless"},
-]
-
 
 def is_windows():
     return platform.uname()[0] == "Windows"
 
 
-def install_cli_dependencies():
+def nodejs_installer():
+    subprocess.call(
+        [
+            r"C:\Users\VincentYan\AppData\Local\Microsoft\WindowsApps\winget.exe",
+            "install",
+            "-e",
+            "--accept-source-agreements",
+            "--accept-package-agreements",
+            "--id",
+            "OpenJS.NodeJS",
+        ]
+    )
+
+
+def serverless_installer():
+    subprocess.call(
+        [
+            r"C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe",
+            "npm",
+            "install",
+            "-g",
+            "serverless@3.25.1",
+        ]
+    )
+
+
+def docker_installer():
+    subprocess.call(
+        [
+            r"C:\Users\VincentYan\AppData\Local\Microsoft\WindowsApps\winget.exe",
+            "install",
+            "-e",
+            "--accept-source-agreements",
+            "--accept-package-agreements",
+            "--id",
+            "Docker.DockerDesktop",
+        ]
+    )
+
+
+DEPENDENCIES = [
+    {"name": "NodeJS", "command": "node", "installer": nodejs_installer},
+    {"name": "Serverless", "command": "serverless", "installer": serverless_installer},
+    {"name": "Docker-Desktop", "command": "docker", "installer": docker_installer},
+]
+
+
+def install_cli_dependencies(dependency_name: str = None):
     if not is_windows():
         raise NotImplementedError(
             "Installing all dependencies via this tool is only supported on Windows"
         )
-    try:
-        with find_static_resource_path("aerostat.scripts", "setup_windows.ps1") as p:
-            ps_script = p
-    except Exception as e:
-        raise FileNotFoundError(f"Cannot find setup_windows.ps1: {e}") from e
-    subprocess.call(
-        [
-            r"C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe",
-            "-ExecutionPolicy",
-            "Bypass",
-            "-File",
-            ps_script,
-        ]
-    )
+    if not dependency_name:
+        dependency_name = [d["name"] for d in DEPENDENCIES]
+    for installer in [
+        d["installer"] for d in DEPENDENCIES if d["name"] in dependency_name
+    ]:
+        installer()
+
+
+if __name__ == "__main__":
+    install_cli_dependencies()

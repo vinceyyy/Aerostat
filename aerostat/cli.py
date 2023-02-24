@@ -2,12 +2,15 @@ from typing import Optional
 
 import questionary
 import typer
-from rich import print
+from rich import print, progress
 
 from aerostat import __app_name__, __version__
 from aerostat.core import deployer, installer, loginer
-from aerostat.core.checks import installed_check, loggedin_check, docker_running_check
-from aerostat.core.utils import get_deployment_info, list_deployments
+from aerostat.core.checks import installed_check, loggedin_check, start_docker_desktop
+from aerostat.core.utils import (
+    get_deployment_info,
+    list_deployments,
+)
 
 app = typer.Typer()
 
@@ -18,21 +21,23 @@ def install() -> None:
 
     This command will install Chocolatey, Docker, and Serverless if they are not already installed.
     """
-    try:
-        installed_check()
-        print("[bold green]All dependencies installed.[/bold green]")
-    except Exception as e:
-        print(
-            "\n[bold magenta]Installing dependencies... This will invoke PowerShell and ask for admin permission. Please allow Access in the pop-up window[/bold magenta]"
-        )
+    for dependency in progress.track(installer.DEPENDENCIES):
         try:
-            installer.install_cli_dependencies()
-        except NotImplementedError as e:
-            print(f"[bold red]Error: {e}[/bold red]")
-            raise typer.Exit(1)
-        except FileNotFoundError as e:
-            print(f"[bold red]Error: {e}[/bold red]")
-            raise typer.Exit(1)
+            installed_check(dependency["command"])
+            # print(f"[bold green]{dependency['name']}[/bold green] installed.")
+        except Exception as e:
+            to_install = dependency["name"]
+            print(
+                f"\n[bold magenta]Installing {to_install}. Please allow installation in the pop-up window[/bold magenta]"
+            )
+            try:
+                installer.install_cli_dependencies(to_install)
+            except NotImplementedError as e:
+                print(f"[bold red]Error: {e}[/bold red]")
+                raise typer.Exit(1)
+    print(
+        "[bold green]All dependencies installed. You can proceed to login step.[/bold green]"
+    )
 
 
 @app.command()
@@ -109,7 +114,7 @@ def deploy(
     It will blow up if Docker Desktop is not running.
     """
     installed_check()
-    docker_running_check()
+    start_docker_desktop()
     loggedin_check()
 
     project_dir = deployer.init_project_dir(project_name)
