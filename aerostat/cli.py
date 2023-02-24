@@ -3,7 +3,6 @@ from typing import Optional
 import questionary
 import typer
 from rich import print
-from rich.progress import track
 
 from aerostat import __app_name__, __version__
 from aerostat.core import deployer, installer, loginer
@@ -16,14 +15,12 @@ app = typer.Typer()
 @app.command()
 def install() -> None:
     """Install Docker and Serverless Framework if not installed."""
-    dependencies = ["docker", "serverless"]
     try:
-        for dependency in track(dependencies, "[bold green]Checking dependencies..."):
-            installer.check_cli_dependency(dependency)
+        installed_check()
         print("[bold green]All dependencies installed.[/bold green]")
     except Exception as e:
         print(
-            "\n[bold magenta]Installing dependencies... Please allow Access in the pop-up window[/bold magenta]"
+            "\n[bold magenta]Installing dependencies... This will invoke PowerShell and ask for admin permission. Please allow Access in the pop-up window[/bold magenta]"
         )
         try:
             installer.install_cli_dependencies()
