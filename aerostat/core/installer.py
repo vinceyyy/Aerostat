@@ -40,12 +40,10 @@ def install_cli_dependencies():
 def cli_install():
     """Check dependencies."""
     with Progress() as progress:
-        task = progress.add_task("[bold green]Checking dependencies...", total=3)
+        task = progress.add_task("[bold green]Checking dependencies...", total=2)
         try:
             progress.update(task, advance=1)
-            check_cli_dependency("aws")
-            progress.update(task, advance=1)
-            check_cli_dependency("sam")
+            check_cli_dependency("serverless")
             progress.update(task, advance=1)
             check_cli_dependency("docker")
             print("[bold green]All dependencies installed.[/bold green]")
