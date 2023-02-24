@@ -1,6 +1,6 @@
 # Aerostat
 
-Aerostat is a simple CLI tool to deploy your Machine Learning models to cloud, with a public API to use.
+A simple CLI tool to deploy your Machine Learning models to cloud, with public API and template connections ready to go.
 
 ## Get started
 ### Installation
@@ -40,6 +40,14 @@ Or you can provide these information as command line options like:
 ```bash
 aerostat deploy --model-path /path/to/model --input-columns "['col1','col2','col3']" --python-dependencies scikit-learn --project-name my-project
 ```
+
+## Connections
+Aerostat provides connection templates to use your model in various applications once it is deployed. Currently, it includes templates for:
+- Microsoft Excel
+- Google Sheets
+- Python / Jupyter Notebook
+
+Visit the URL produced by the `aerostat deploy` command to test your model on cloud, and get the connection templates.
 
 ## Other Commands
 ### List
