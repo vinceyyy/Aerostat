@@ -1,6 +1,6 @@
+import importlib.resources
 import os
 import subprocess
-import importlib.resources
 from importlib import import_module
 from importlib.abc import Traversable
 
@@ -60,3 +60,8 @@ def get_deployment_info(project_name: str):
 def get_module_version() -> str:
     """Get module version"""
     return import_module("aerostat").__version__
+
+
+def get_window_user_dir() -> str:
+    """Get user directory on Windows"""
+    return os.path.expanduser("~")
