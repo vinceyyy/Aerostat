@@ -7,6 +7,7 @@ from rich.progress import track
 
 from aerostat.core.installer import DEPENDENCIES
 from aerostat.core.loginer import get_aws_profile_credentials
+from aerostat.core.utils import OS
 
 
 def installed_check(command: str = None):
@@ -26,7 +27,7 @@ def installed_check(command: str = None):
             subprocess.run(
                 f"{command} --version", shell=True, check=True, capture_output=True
             )
-    except FileNotFoundError as e:
+    except ChildProcessError as e:
         print(
             f"[bold red]Dependencies not installed. Please run [bold blue]aerostat install[/bold blue] and try again.[/bold red]"
         )
@@ -36,7 +37,7 @@ def installed_check(command: str = None):
 def loggedin_check():
     try:
         get_aws_profile_credentials("aerostat")
-    except Exception as e:
+    except KeyError as e:
         print(
             "[bold red]You are not logged in. Please run [bold blue]aerostat login[/bold blue] and try again.[/bold red]"
         )
@@ -59,11 +60,21 @@ def docker_running_check(verbose=False):
 
 def start_docker_desktop():
     try:
-        docker_running_check(verbose=True)
-    except:
-        subprocess.call(
-            r"""powershell "& 'C:\Program Files\Docker\Docker\Docker Desktop.exe'""",
-        )
+        docker_running_check()
+    except typer.Exit as e:
+        print("[bold green]Starting Docker Desktop...[/bold green]")
+        if OS.is_windows():
+            subprocess.run(
+                r"""powershell "& 'C:\Program Files\Docker\Docker\Docker Desktop.exe'""",
+            )
+        if OS.is_mac():
+            subprocess.run(
+                [
+                    "open",
+                    "-a",
+                    "Docker",
+                ],
+            )
         count = 0
         while True:
             time.sleep(5)
@@ -75,3 +86,7 @@ def start_docker_desktop():
                 break
             except Exception as e:
                 count += 1
+
+
+if __name__ == "__main__":
+    start_docker_desktop()
