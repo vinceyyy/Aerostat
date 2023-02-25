@@ -1,7 +1,7 @@
-import importlib.resources
 import os
+import platform
 import subprocess
-from importlib import import_module
+from importlib import import_module, resources
 from importlib.abc import Traversable
 
 
@@ -27,7 +27,7 @@ def get_local_aerostat_folder():
 def find_static_resource_path(module: str, filename: str = "") -> Traversable:
     """Load Vega spec template from file"""
     try:
-        return importlib.resources.files(module).joinpath(filename)
+        return resources.files(module).joinpath(filename)
     except Exception:
         raise ValueError(f"Cannot open {filename}")
 
@@ -62,6 +62,15 @@ def get_module_version() -> str:
     return import_module("aerostat").__version__
 
 
-def get_window_user_dir() -> str:
-    """Get user directory on Windows"""
-    return os.path.expanduser("~")
+class OS:
+    @staticmethod
+    def is_windows():
+        return platform.system() == "Windows"
+
+    @staticmethod
+    def is_mac():
+        return platform.system() == "Darwin"
+
+    @staticmethod
+    def is_linux():
+        return platform.system() == "Linux"

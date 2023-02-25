@@ -28,7 +28,7 @@ def install() -> None:
         except Exception as e:
             to_install = dependency["name"]
             print(
-                f"\n[bold magenta]Installing {to_install}. Please allow installation in the pop-up window[/bold magenta]"
+                f"\n[bold magenta]Installing {to_install}... Please allow if installation window pops up.[/bold magenta]"
             )
             try:
                 installer.install_cli_dependencies(to_install)
