@@ -14,7 +14,7 @@ i.e. `python -m aerostat deploy`.
 Only three commands needed for deploying your model: `install`, `login`, and `deploy`.
 
 ### Setup
-1. Run the following command to install all the dependencies needed to run Aerostat. Please allow installation in the pop-up windows to
+1. Run the following command to install all the dependencies needed to run Aerostat. Please allow installation in the pop-up window to
    continue.
 ```bash
 aerostat install
