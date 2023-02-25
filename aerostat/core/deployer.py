@@ -95,12 +95,7 @@ def deploy_to_aws(
         "SYSTEM_DEPENDENCIES": " ".join(system_dependencies),
     }
 
-    try:
-        run_serverless_command(command="deploy", env=env, cwd=serverless_service_dir)
-    except Exception as e:
-        raise Exception(
-            f"Failed to build docker image, please make sure docker desktop is running: {e}"
-        )
+    return run_serverless_command(command="deploy", env=env, cwd=serverless_service_dir)
 
 
 def get_system_dependencies(python_dependencies: list[str]) -> list[str]:
